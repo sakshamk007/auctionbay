@@ -1,10 +1,23 @@
 //const jwt = require('jsonwebtoken');
-module.exports = function auth(authKeyword) { return function auth(req, res, next){
+module.exports = function auth(authKeyword, isApi=false) { return function auth(req, res, next){
 
-    const token = req.header('x-auth-token');
-   // if(!token) res.status(401).send('Access Denied. No Token Provided.');
-    req.user = {"name":"Mandeep Saini","_id":"12345"};
+    const token = req.cookies.session;
+    if (!token) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    const query = 'SELECT * FROM sessions WHERE token = ?';
+    db.query(query, [token], (err, results) => {
+        if (err || results.length === 0) {
+            return res.status(401).send('Unauthorized');
+        }
+        req.user_id = results[0].user_id;
+        next();
+    });
+
     req.authKeyword = authKeyword;
+    
+
     next();
 
     // try{
@@ -15,6 +28,8 @@ module.exports = function auth(authKeyword) { return function auth(req, res, nex
     // catch(ex){
     //     res.status(400).send('Access Denied. Invalid Token');
     // }
+
+    // 7Y7LXGBMTJ6BCD0LTQ7CRN3BECVMHZML
 
     }
 }
