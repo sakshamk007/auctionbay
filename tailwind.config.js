@@ -1,6 +1,8 @@
+const tailwindcss = require('tailwindcss');
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
-  content: ["./src/**/*.{html,js}"],
+  content: ["./app/views/**/*.{html,css,js,ejs}","./public/**/*.{css,js}"],
   theme: {
     extend: {},
   },

@@ -4,12 +4,16 @@
   "description": "Base Package for Node projects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "watch": "concurrently \"nodemon index.js\" \"npx tailwindcss -i ./public/src/input.css -o ./public/src/output.css --watch\""
   },
   "author": "Mandeep Saini",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "brcypt": "^1.0.1",
     "config": "^3.3.11",
     "cookie-parser": "^1.4.6",
     "debug": "^4.3.5",
@@ -17,11 +21,13 @@
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
+    "express-session": "^1.18.0",
     "joi": "^17.13.1",
     "lodash": "^4.17.21",
     "module-alias": "^2.2.3",
     "mysql": "^2.18.1",
     "mysql2": "^3.10.1",
+    "uuid": "^10.0.0",
     "winston": "^3.13.0"
   },
   "_moduleAliases": {
@@ -32,9 +38,12 @@
     "@middlewares": "./app/middlewares",
     "@views": "./app/views",
     "@helpers": "./app/helper",
-    "@models": "./app/models"
+    "@models": "./app/models",
+    "@configs": "./config"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4"
   }
 }

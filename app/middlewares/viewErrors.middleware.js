@@ -1,7 +1,3 @@
-module.exports = function(err,req,res,next)
-{
-
-    //Log Error Here
-    
+module.exports = function(err,req,res,next){    
     res.send('Something Went Wrong');
 }

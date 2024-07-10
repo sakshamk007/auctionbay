@@ -1,35 +1,35 @@
-//const jwt = require('jsonwebtoken');
-module.exports = function auth(authKeyword, isApi=false) { return function auth(req, res, next){
+const pool = require('@configs/database');
 
-    const token = req.cookies.session;
-    if (!token) {
-        return res.status(401).send('Unauthorized');
+const authenticate = async (req, res, next) => {
+    const { session_id } = req.cookies;
+    if (!session_id) {
+        return res.status(401).send('Unauthorized: No session ID');
     }
-
-    const query = 'SELECT * FROM sessions WHERE token = ?';
-    db.query(query, [token], (err, results) => {
-        if (err || results.length === 0) {
-            return res.status(401).send('Unauthorized');
+    try {
+        const [rows] = await pool.query('SELECT * FROM sessions WHERE session_id = ?', [session_id]);
+        if (rows.length === 0) {
+            return res.status(401).send('Unauthorized: Invalid session ID');
         }
-        req.user_id = results[0].user_id;
+        await pool.query('UPDATE sessions SET expiry = DATE_ADD(NOW(), INTERVAL 30 MINUTE), last_activity = NOW() WHERE session_id = ?', [session_id]);
+        req.user = { id: rows[0].user_id };
         next();
-    });
-
-    req.authKeyword = authKeyword;
-    
-
-    next();
-
-    // try{
-    // const decoded = jwt.verify(token,'jwtPrivateKey');
-    // req.user = decoded;
-    // next();
-    // }
-    // catch(ex){
-    //     res.status(400).send('Access Denied. Invalid Token');
-    // }
-
-    // 7Y7LXGBMTJ6BCD0LTQ7CRN3BECVMHZML
-
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
+const terminateInactiveSessions = async () => {
+    try {
+        const [rows] = await pool.query('SELECT session_id FROM sessions WHERE last_activity < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND terminated_at IS NULL');
+        for (const row of rows) {
+            await pool.query('UPDATE sessions SET terminated_at = NOW() WHERE session_id = ?', [row.session_id]);
+        }
+        console.log(`Terminated ${rows.length} inactive sessions`);
+    } catch (error) {
+        console.error('Error terminating inactive sessions:', error);
+    }
+};
+setInterval(terminateInactiveSessions, 60 * 1000);
+
+module.exports = authenticate;

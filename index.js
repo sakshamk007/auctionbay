@@ -1,72 +1,39 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const mysql = require('mysql2');
-const crypto = require('crypto');
+const cookieParser = require('cookie-parser')
 const  path = require('path');
-const fs = require('fs');
-//Init Startup Debuger
 const debugStartUp = require('debug')('app:startup');
-
 require('dotenv').config();
-//Init Startup Error Logger
-require('module-alias/register');//Needed for @ in path
+require('module-alias/register');
 require('@startup/errorLog.start')(process);
 
-//Init Express App
-const app = express();
 
-app.use(bodyParser.json());
-app.use(cookieParser());
+const app = express();
+const port = process.env.PORT;
+
+app.use(cookieParser())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.set("view engine", "ejs");
-app.set('views', path.join(__dirname, './app/views'));
+app.set('views', path.join(__dirname, 'app', 'views'));
 
-
-//Init all Databases Here
-// async function createDatabase() {
-//   const sql = await fs.readFileSync('./app/databases/sessions.sql', 'utf8');
-// }
-
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: process.env.DB_PASSWORD,
-  database: 'auth_db'
-});
-
-db.connect(err => {
-  if (err) {
-      console.error('Could not connect to database:', err);
-      process.exit(1);
-  } else {
-      console.log('Connected to MySQL database');
-  }
-});
-
-
-
-//Simulate an Uncaught Error code
-//throw new Error('Thrown Error');
-
-//Simulate an Unhandled Error code
-// const p = Promise.reject(new Error('Thrown Rejected Promise Error'));
-// p.then(()=> console.log('done'));
-
-
-
-
-
-//All Routes //./app/routes/
-require('@routes/admin.routes')(app);
+// require('@routes/admin.routes')(app);
 require('@routes/api.routes')(app);
+require('@routes/web.routes')(app);
 
+const authenticate = require('@middlewares/auth.middleware');
 
+app.get('/protected', authenticate, (req, res) => {
+  res.send('This is a protected route');
+});
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
-//Define Important Const / Var / Let
-const port = process.env.PORT || 3000;
-//App Listen Code
 app.listen(port, () => {
   debugStartUp(`Node app Started`);
   console.log(`Node app listening on port http://localhost:${port}`);
