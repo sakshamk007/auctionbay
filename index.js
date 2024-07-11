@@ -3,10 +3,10 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
 const  path = require('path');
 const debugStartUp = require('debug')('app:startup');
+const expressLayouts = require('express-ejs-layouts');
 require('dotenv').config();
 require('module-alias/register');
 require('@startup/errorLog.start')(process);
-
 
 const app = express();
 const port = process.env.PORT;
@@ -18,9 +18,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'app', 'views'));
+app.use(expressLayouts);
+app.set('layout', 'web/layouts/auth');
 
 // require('@routes/admin.routes')(app);
-require('@routes/api.routes')(app);
+// require('@routes/api.routes')(app);
 require('@routes/web.routes')(app);
 
 const authenticate = require('@middlewares/auth.middleware');

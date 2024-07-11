@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in</title>
+    <title>Authentication</title>
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
     <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
@@ -11,17 +11,17 @@
 <body>
     <div class="absolute inset-0 -z-10 h-full w-full flex justify-center items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
         <div class="w-[500px] h-[450px] bg-gray-500 bg-opacity-20 rounded-2xl px-6 py-10 text-white">
-            <form action="/web/signin" method="post" class="flex items-center flex-col gap-6">
-                <div class="text-4xl">Sign in</div>
-                <input type="email" name="email" required placeholder="email" class="bg-black rounded-lg p-2 w-[400px] h-12">
-                <div class="flex justify-center relative">
-                    <input type="password" name="password" required placeholder="password" class="bg-black rounded-lg p-2 w-[400px] h-12 password">
-                    <img src="/img/invisible.svg" alt="" class="visibility absolute right-4 top-4">
-                </div>
-                <a href=""><h1 class="text-violet-400">Forgot password?</h1></a>
-                <button type="submit" class="w-[400px] bg-violet-800 p-2 rounded-lg h-12">Sign in</button>
-                <h1>Don't have an account? <a href="./signup" class="text-violet-400">Sign up</a></h1>
-            </form>
+            
+            <% if (page === 'signup') { %>
+                <%- include('../partials/signup') %>
+            <% } else if (page === 'signin') { %>
+                <%- include('../partials/signin') %>
+            <% } else if (page === 'error') { %>
+                <%- include('../partials/error', {status: status, message: message}) %>
+            <% } else if (page === 'success') { %>
+                <%- include('../partials/success', {status: status, message: message}) %>
+            <% } %> 
+
         </div>
     </div>
 

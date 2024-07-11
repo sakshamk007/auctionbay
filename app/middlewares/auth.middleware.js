@@ -6,7 +6,7 @@ const authenticate = async (req, res, next) => {
         return res.status(401).send('Unauthorized: No session ID');
     }
     try {
-        const [rows] = await pool.query('SELECT * FROM sessions WHERE session_id = ?', [session_id]);
+        const [rows] = await pool.query('SELECT * FROM sessions WHERE session_id = ? AND expiry > NOW()', [session_id]);
         if (rows.length === 0) {
             return res.status(401).send('Unauthorized: Invalid session ID');
         }

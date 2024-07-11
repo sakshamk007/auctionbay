@@ -674,10 +674,6 @@ video {
   height: 450px;
 }
 
-.h-\[500px\] {
-  height: 500px;
-}
-
 .h-full {
   height: 100%;
 }
@@ -716,6 +712,58 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.w-\[\] {
+  width: ;
+}
+
+.w-\[5\] {
+  width: 5;
+}
+
+.w-\[500\] {
+  width: 500;
+}
+
+.w-\[500p\] {
+  width: 500p;
+}
+
+.w-\[00px\] {
+  width: 00px;
+}
+
+.w-\[200px\] {
+  width: 200px;
+}
+
+.w-\[100px\] {
+  width: 100px;
+}
+
+.w-\[10px\] {
+  width: 10px;
+}
+
+.w-\[px\] {
+  width: px;
+}
+
+.w-\[5px\] {
+  width: 5px;
+}
+
+.w-\[50px\] {
+  width: 50px;
+}
+
+.w-\[8px\] {
+  width: 8px;
+}
+
+.w-\[80px\] {
+  width: 80px;
 }
 
 .border-collapse {
@@ -760,6 +808,18 @@ video {
 
 .gap-8 {
   gap: 2rem;
+}
+
+.gap-16 {
+  gap: 4rem;
+}
+
+.gap-10 {
+  gap: 2.5rem;
+}
+
+.gap-1 {
+  gap: 0.25rem;
 }
 
 .rounded {
@@ -939,6 +999,16 @@ video {
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
 }
 
 .text-violet-200 {
