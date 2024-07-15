@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidverse</title>
+    <link href="/src/input.css" type="text/css" rel="stylesheet">
+    <link href="/src/output.css" type="text/css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
+</head>
+<body class="text-white font-body_font">
+    <div class="absolute top-0 z-[-2] h-screen w-screen bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+        <nav class="flex justify-between px-16 py-14">
+            <div class="text-5xl text-yellow-400">&lt; Bidverse &gt;</div>
+            <div class="flex gap-6">
+                
+                <% if (page === 'loggedin') { %>
+                    <%- include('../partials/loggedin') %>
+                <% } else if (page === 'notloggedin') { %>
+                    <%- include('../partials/notloggedin') %>
+                <% } %> 
+
+            </div>
+        </nav>
+        <main class="flex ">
+            <div class="px-16 py-0 flex flex-col gap-14"x>            
+                <div class="w-[1000px] text-2xl leading-relaxed">Welcome to Bidverse, the ultimate online platform for buying and selling unique items. Whether you're looking to place a bid on rare collectibles, post your own treasures for auction, or find unbeatable deals, our community-driven marketplace has something for everyone. Sign up now to start bidding, winning, and experiencing the thrill of the auction!</div>
+                <div class="text-2xl">Get Started Now!</div>
+                <div class="flex gap-6">
+                    <button class="bg-lime-800 text-2xl p-4 rounded-full">Check Bids</button>
+                    <button class="bg-lime-800 text-2xl p-4 rounded-full">Post Bids</button>
+                </div>
+            </div>
+            
+            <% if (page === 'loggedin') { %>
+                <%- include('../partials/wishlist') %>
+            <% } %> 
+
+        </main>
+    </div>
+</body>
+</html>

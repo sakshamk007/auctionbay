@@ -4,6 +4,7 @@ const pool = require('@configs/database');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
+const authenticate = require('@middlewares/auth.middleware');
 
 const asyncHandler = fn => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
@@ -25,7 +26,7 @@ router.post('/signup', asyncHandler(async (req, res) => {
     const user_id = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
     await pool.query('INSERT INTO users (email, password, user_id) VALUES (?, ?, ?)', [email, hashedPassword, user_id]);
-    res.status(201).render('web/layouts/auth', { page: 'success', status: 201, message: 'User registered successfully. '});
+    res.redirect('/');
 }));
 
 router.get('/signin', (req, res) => {
@@ -50,7 +51,7 @@ router.post('/signin', async (req, res) => {
 
         await pool.query('INSERT INTO sessions (session_id, user_id, user_agent, expiry, last_activity) VALUES (?, ?, ?, ?, NOW())', [session_id, user.user_id, user_agent, expiry]);
         res.cookie('session_id', session_id, { httpOnly: true, maxAge: 30 * 60 * 1000 });
-        res.render('web/landing');
+        res.redirect('/welcome');
     } catch (error) {
         console.error(error);
         res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Internal server error' });

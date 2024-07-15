@@ -19,17 +19,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'app', 'views'));
 app.use(expressLayouts);
-app.set('layout', 'web/layouts/auth');
+app.set('layout', 'web/layouts/auth', 'web/layouts/landing');
 
 // require('@routes/admin.routes')(app);
 // require('@routes/api.routes')(app);
 require('@routes/web.routes')(app);
-
-const authenticate = require('@middlewares/auth.middleware');
-
-app.get('/protected', authenticate, (req, res) => {
-  res.send('This is a protected route');
-});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
