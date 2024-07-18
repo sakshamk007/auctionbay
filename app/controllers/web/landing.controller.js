@@ -39,7 +39,7 @@ router.post('/postbid', authenticate, upload.single('image'), async (req, res) =
     const user_id = uuidv4();
     const bidQuery = `INSERT INTO bids (user_id, name, email, title, auction, date, type, contact, description, price, time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     try {
-        const [result] = await pool.query(bidQuery, [user_id, name, email, title, auction, date, type, contact, description, price, time]);
+        await pool.query(bidQuery, [user_id, name, email, title, auction, date, type, contact, description, price, time]);
         if (image) {
             const imageQuery = `INSERT INTO images (bid_id, image_path) VALUES (?, ?)`;
             await pool.query(imageQuery, [user_id, image]);
@@ -52,5 +52,10 @@ router.post('/postbid', authenticate, upload.single('image'), async (req, res) =
         res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error inserting bid' });
     }
 });
+
+router.get('/checkbid', authenticate, async (req,res)=>{
+    const [data] = await pool.query(`SELECT * FROM bids`);
+    res.render('web/pages/checkbid', {layout: "web/pages/checkbid", rows: data})
+})
 
 module.exports = router;

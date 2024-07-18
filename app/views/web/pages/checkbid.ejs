@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Bids</title>
+    <link href="/src/input.css" type="text/css" rel="stylesheet">
+    <link href="/src/output.css" type="text/css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000000;
+            padding: 8px;
+        }
+        th {
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="text-white font-body_font flex">
+    <div class="absolute top-0 z-[-2] min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+        <div class="text-4xl text-yellow-400 p-14 text-center">&lt; Check Bids &gt;</div>
+        <div class="flex justify-center items-center gap-10">
+            <button class="forward w-[300px] text-center text-2xl py-4 rounded-full bg-gradient-to-b from-sky-700 to-sky-900">Forward Auction</button>
+            <button class="reverse opacity-50 w-[300px] text-center text-2xl py-4 rounded-full bg-gradient-to-b from-lime-700 to-lime-900">Reverse Auction</button>
+        </div>
+        <table class="my-14 w-[90%] text-white overflow-y-auto">
+            <thead class="bg-violet-900">
+                <tr>
+                    <th class="w-[150px]">By</th>
+                    <th class="w-[250px]">Title</th>
+                    <th class="w-[400px]">Description</th>
+                    <th class="w-[120px]">Base Price</th>
+                    <th class="w-[180px]">Date</th>
+                    <th class="w-[80px]">Time</th>
+                    <th class="w-[120px]"></th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-800">
+                <% rows.forEach(row => { %>
+                    <tr class="<%= row.auction %>">
+                        <td><%= row.name %></td>
+                        <td><%= row.title %></td>
+                        <td><%= row.description %></td>
+                        <td><%= row.price %></td>
+                        <td><%= row.date.toString().split('00:00:00')[0] %></td>
+                        <td><%= row.time %></td>
+                        <td><button class="bg-cyan-700 rounded-lg p-2">Interested</button></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>            
+    </div>    
+
+    <script>
+        document.querySelector('.forward').addEventListener('click', () => {
+            document.querySelector('.reverse').classList.add('opacity-50')
+            document.querySelector('.forward').classList.remove('opacity-50')
+            filterRows('forward');
+        })
+        document.querySelector('.reverse').addEventListener('click', () => {
+            document.querySelector('.forward').classList.add('opacity-50')
+            document.querySelector('.reverse').classList.remove('opacity-50')
+            filterRows('reverse');
+        })
+        function filterRows(auction){
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                if(row.classList.contains(auction)){
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            })
+        }
+        filterRows('forward');
+    </script>
+</body>
+</html>
