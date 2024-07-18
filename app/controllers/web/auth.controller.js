@@ -4,7 +4,6 @@ const pool = require('@configs/database');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
-const authenticate = require('@middlewares/auth.middleware');
 
 const asyncHandler = fn => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
