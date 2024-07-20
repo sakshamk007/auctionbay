@@ -7,6 +7,7 @@ const path = require('path');
 const pool = require('@configs/database');
 const Bid = require('@models/bid.model');
 const Image = require('@models/image.model');
+const Wishlist = require('@models/wishlist.model');
 const { v4: uuidv4 } = require('uuid');
 
 // const asyncHandler = fn => (req, res, next) => {
@@ -17,8 +18,9 @@ router.get('/', (req,res)=>{
     res.render('web/layouts/landing', {layout: "web/layouts/landing", page: 'notloggedin'})
 })
 
-router.get('/welcome', authenticate, (req,res)=>{
-    res.render('web/layouts/landing', {layout: "web/layouts/landing", page: 'loggedin'})
+router.get('/welcome', authenticate, async (req,res)=>{
+    const [rows] = await pool.query('SELECT * FROM wishlist WHERE user_id = ?', [req.cookies.user_id]);
+    res.render('web/layouts/landing', {layout: "web/layouts/landing", page: 'loggedin', rows: rows})
 })
 
 router.get('/postbid', authenticate, (req,res)=>{
@@ -68,11 +70,12 @@ router.get('/startbid', authenticate, async (req,res)=>{
 })
 
 router.post('/startbid', authenticate, async (req, res) => {
+    const user_id = req.cookies.user_id;
     const { bid_id, name, type, title, description, auction, price, date, time } = req.body;
     try {
         const imageData = await Image.findByImageId(bid_id);
         const imagePath = imageData.length > 0 ? imageData[0].image_path : null;
-        res.render('web/pages/startbid', {layout: "web/pages/startbid", name, type, title, description, auction, price, date, time, imagePath});
+        res.render('web/pages/startbid', {layout: "web/pages/startbid", user_id, bid_id, name, type, title, description, auction, price, date, time, imagePath});
     } catch (err) {
         console.error('Error fetching image path:', err);
         res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error fetching image path' });
@@ -83,6 +86,39 @@ router.get('/mybid', authenticate, async (req,res)=>{
     const user_id = req.cookies.user_id;
     const rows = await Bid.findByUserId(user_id);
     res.render('web/pages/mybid', {layout: "web/pages/mybid", rows: rows})
+})
+
+router.post('/wishlist', authenticate, async (req,res)=>{
+    const { bid_id, user_id, title } = req.body;
+    try {
+        // const [rows] = await pool.query('SELECT * FROM wishlist WHERE wishlist_id = ? AND user_id = ?', [bid_id, user_id]);
+        const rows = await Wishlist.read(bid_id, user_id);
+        if (rows.length > 0) {
+            res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'Bid already exists in your wishlist' });
+        } else {
+            // await pool.query('INSERT INTO wishlist (wishlist_id, user_id, title) VALUES (?, ?, ?)', [bid_id, user_id, title]);
+            await Wishlist.add(bid_id, user_id, title);
+            res.redirect('/welcome');
+        }
+    } catch (err) {
+        console.error('Error adding to wishlist', err);
+        res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error adding to wishlist' });
+    }
+})
+
+router.post('/wishlist-startbid', authenticate, async (req,res)=>{
+    const { wishlist_id } = req.body;
+    const rows = await Bid.findByBidId(wishlist_id);
+    const row = rows[0];
+    const { user_id, bid_id, name, type, title, description, auction, price, date, time } = row;
+    try {
+        const imageData = await Image.findByImageId(wishlist_id);
+        const imagePath = imageData.length > 0 ? imageData[0].image_path : null;
+        res.render('web/pages/startbid', {layout: "web/pages/startbid", user_id, bid_id, name, type, title, description, auction, price, date, time, imagePath});        
+    } catch (err) {
+        console.error('Error fetching image path:', err);
+        res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error fetching image path' });
+    }   
 })
 
 module.exports = router;

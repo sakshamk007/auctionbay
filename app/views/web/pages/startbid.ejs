@@ -35,17 +35,16 @@
                         <div class="text-xl"><strong>No Image Available</strong></div>
                     <% } %>
                 </div>
-                <button class="wishlist bg-cyan-700 rounded-lg p-2">Save to wishlist</button>
+                <form action="/wishlist" method="POST">
+                    <input type="hidden" name="user_id" value="<%= user_id %>">
+                    <input type="hidden" name="bid_id" value="<%= bid_id %>">
+                    <input type="hidden" name="title" value="<%= title %>">
+                    <button type="submit" class="wishlist bg-cyan-700 rounded-lg p-2">Save to wishlist</button>
+                </form>
                 <div class="text-center">Bidding will be activated on <%= date %> at <%= time %></div>
                 <button class="bg-cyan-700 rounded-lg p-2">Start Bidding</button>
             </div>
         </div>
     </div>
-
-    <script>
-        document.querySelector('.wishlist').addEventListener('click', () => {
-            
-        });
-    </script>
 </body>
 </html>

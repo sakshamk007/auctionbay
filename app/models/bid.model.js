@@ -14,13 +14,13 @@ const Bid = {
         return rows.length > 0;
     },
     findByUserId: async (userId) => {
-        const [rows] = await pool.execute('SELECT * FROM bids WHERE user_id = ?', [userId]);
+        const [rows] = await pool.execute('SELECT * FROM bids WHERE user_id = ? ORDER BY DATE(date) ASC, TIME(time) ASC', [userId]);
         return rows;
     },
-    // findByAuctionId: async (auctionId) => {
-    //     const [rows] = await pool.execute('SELECT * FROM bids WHERE auction_id = ?', [auctionId]);
-    //     return rows;
-    // },
+    findByBidId: async (Bid_id) => {
+        const [rows] = await pool.execute('SELECT * FROM bids WHERE Bid_id = ?', [Bid_id]);
+        return rows;
+    },
     // delete: async (id) => {
     //     const [result] = await pool.execute('DELETE FROM bids WHERE id = ?', [id]);
     //     return result;

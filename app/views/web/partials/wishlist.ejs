@@ -1,16 +1,11 @@
 <div class="bg-gradient-to-b from-lime-700 to-lime-900 w-[350px] max-h-[450px] min-h-[400px] rounded-3xl p-4 flex flex-col gap-4">
     <div class="text-center text-2xl">Wishlist</div>
-    <ul class="flex flex-col gap-4 overflow-y-auto">
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
-        <li class="bg-slate-950 rounded-full px-4 py-2 text-sm">Lorem ipsum dolor sit.</li>
+    <ul class="flex flex-col gap-4 overflow-y-auto pb-2">
+        <% rows.forEach(row => { %>
+            <form action="/wishlist-startbid" method="POST">
+                <input type="hidden" name="wishlist_id" value="<%= row.wishlist_id %>">
+                <button type="submit" class="bg-slate-950 rounded-full px-4 py-2 text-sm text-left w-full"><%= row.title %></button>
+            </form>
+        <% }); %>
     </ul>
 </div>
