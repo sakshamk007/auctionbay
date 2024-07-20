@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('@configs/database');
+// const pool = require('@configs/database');
+const user = require('@models/user.model');
+const session = require('@models/session.model');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
@@ -18,13 +20,15 @@ router.post('/signup', asyncHandler(async (req, res) => {
     if (password !== confirmPassword) {
         return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'Passwords do not match.' });
     }
-    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    // const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    const rows = await user.read(email);
     if (rows.length > 0) {
         return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'User already exists. '});
     }
     const user_id = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
-    await pool.query('INSERT INTO users (email, password, user_id) VALUES (?, ?, ?)', [email, hashedPassword, user_id]);
+    // await pool.query('INSERT INTO users (email, password, user_id) VALUES (?, ?, ?)', [email, hashedPassword, user_id]);
+    await user.add(email, hashedPassword, user_id);
     res.redirect('/');
 }));
 
@@ -36,20 +40,22 @@ router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
     const user_agent = req.headers['user-agent'];
     try {
-        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+        // const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+        const rows = await user.read(email);        
         if (rows.length === 0) {
             return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'User not found' });
         }
-        const user = rows[0];
-        const match = await bcrypt.compare(password, user.password);
+        const User = rows[0];
+        const match = await bcrypt.compare(password, User.password);
         if (!match) {
             return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'Invalid password' });
         }
         const session_id = crypto.randomBytes(16).toString('hex');
         const expiry = new Date(Date.now() + 30 * 60 * 1000);
-
-        await pool.query('INSERT INTO sessions (session_id, user_id, user_agent, expiry, last_activity) VALUES (?, ?, ?, ?, NOW())', [session_id, user.user_id, user_agent, expiry]);
+        // await pool.query('INSERT INTO sessions (session_id, user_id, user_agent, expiry, last_activity) VALUES (?, ?, ?, ?, NOW())', [session_id, user.user_id, user_agent, expiry]);
+        await session.add(session_id, User.user_id, user_agent, expiry);
         res.cookie('session_id', session_id, { httpOnly: true, maxAge: 30 * 60 * 1000 });
+        res.cookie('user_id', User.user_id);
         res.redirect('/welcome');
     } catch (error) {
         console.error(error);

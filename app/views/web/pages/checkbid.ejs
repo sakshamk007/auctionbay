@@ -48,7 +48,20 @@
                         <td><%= row.price %></td>
                         <td><%= row.date.toString().split('00:00:00')[0] %></td>
                         <td><%= row.time %></td>
-                        <td><button class="bg-cyan-700 rounded-lg p-2">Interested</button></td>
+                        <td>
+                            <form action="/startbid" method="POST">
+                                <input type="hidden" name="bid_id" value="<%= row.bid_id %>">
+                                <input type="hidden" name="name" value="<%= row.name %>">
+                                <input type="hidden" name="type" value="<%= row.type %>">
+                                <input type="hidden" name="title" value="<%= row.title %>">
+                                <input type="hidden" name="description" value="<%= row.description %>">
+                                <input type="hidden" name="auction" value="<%= row.auction %>">
+                                <input type="hidden" name="price" value="<%= row.price %>">
+                                <input type="hidden" name="date" value="<%= row.date.toString().split('00:00:00')[0] %>">
+                                <input type="hidden" name="time" value="<%= row.time %>">
+                                <button type="submit" class="interested bg-cyan-700 rounded-lg p-2">Interested</button>
+                            </form>
+                        </td>
                     </tr>
                 <% }); %>
             </tbody>

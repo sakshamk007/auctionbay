@@ -1,16 +1,19 @@
-const pool = require('@configs/database');
+// const pool = require('@configs/database');
+const session = require('@models/session.model');
 
 const authenticate = async (req, res, next) => {
     const { session_id } = req.cookies;
     if (!session_id) {
-        return res.status(401).render('web/layouts/auth', { page: 'error', status: 401, message: 'Unauthorised Access - Invalid Session' });
+        return res.status(401).render('web/layouts/auth', { page: 'signin'});
     }
     try {
-        const [rows] = await pool.query('SELECT * FROM sessions WHERE session_id = ? AND expiry > NOW()', [session_id]);
+        // const [rows] = await pool.query('SELECT * FROM sessions WHERE session_id = ? AND expiry > NOW()', [session_id]);
+        const rows = await session.read(session_id);
         if (rows.length === 0) {
             return res.status(401).render('web/layouts/auth', { page: 'error', status: 401, message: 'Unauthorised Access - Session Not Found' });
         }
-        await pool.query('UPDATE sessions SET expiry = DATE_ADD(NOW(), INTERVAL 30 MINUTE), last_activity = NOW() WHERE session_id = ?', [session_id]);
+        // await pool.query('UPDATE sessions SET expiry = DATE_ADD(NOW(), INTERVAL 30 MINUTE), last_activity = NOW() WHERE session_id = ?', [session_id]);
+        await session.edit(session_id);
         req.user = { id: rows[0].user_id };
         next();
     } catch (error) {
@@ -31,6 +34,6 @@ const terminateInactiveSessions = async () => {
         console.error('Error terminating inactive sessions:', error);
     }
 };
-setInterval(terminateInactiveSessions, 60 * 1000);
+setInterval(terminateInactiveSessions, 30 * 60 * 1000);
 
 module.exports = authenticate;

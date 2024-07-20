@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Bid</title>
+    <link href="/src/input.css" type="text/css" rel="stylesheet">
+    <link href="/src/output.css" type="text/css" rel="stylesheet">
+    <style>
+        strong{
+            color: yellow;
+        }
+    </style>
+</head>
+<body class="text-white font-body_font flex">
+    <div class="min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+        <div class="text-4xl text-yellow-400 p-14 text-center">&lt; Start Bidding &gt;</div>
+        <div class="flex w-full">
+            <div class="flex flex-col justify-start gap-4 w-[65%] px-8">        
+                <div class="text-xl"><strong>Company Name:</strong> <%= name %></div>
+                <div class="text-xl"><strong>Company Type:</strong> <%= type %></div>        
+                <div class="text-xl"><strong>Title:</strong> <%= title %></div>
+                <div class="text-xl"><strong>Description:</strong> <%= description %></div>        
+                <div class="text-xl"><strong>Auction type:</strong> <%= auction %></div>
+                <div class="text-xl"><strong>Price:</strong> <%= price %></div>
+                <div class="text-xl"><strong>Date:</strong> <%= date %></div>
+                <div class="text-xl"><strong>Time:</strong> <%= time %></div>
+            </div>
+            <div class="flex flex-col items-center gap-4 justify-start px-8 mb-8">
+                <div class="flex flex-col gap-2">
+                    <% if (imagePath) { %>
+                        <div class="text-xl"><strong>Image:</strong></div>
+                        <img src="/uploads/<%= imagePath %>" alt="Bid Image" class="h-[300px] object-cover border border-white">
+                    <% } else { %>
+                        <div class="text-xl"><strong>No Image Available</strong></div>
+                    <% } %>
+                </div>
+                <button class="wishlist bg-cyan-700 rounded-lg p-2">Save to wishlist</button>
+                <div class="text-center">Bidding will be activated on <%= date %> at <%= time %></div>
+                <button class="bg-cyan-700 rounded-lg p-2">Start Bidding</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.wishlist').addEventListener('click', () => {
+            
+        });
+    </script>
+</body>
+</html>
