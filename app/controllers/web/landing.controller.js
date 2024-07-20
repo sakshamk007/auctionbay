@@ -79,4 +79,10 @@ router.post('/startbid', authenticate, async (req, res) => {
     }
 });
 
+router.get('/mybid', authenticate, async (req,res)=>{
+    const user_id = req.cookies.user_id;
+    const rows = await Bid.findByUserId(user_id);
+    res.render('web/pages/mybid', {layout: "web/pages/mybid", rows: rows})
+})
+
 module.exports = router;
