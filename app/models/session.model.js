@@ -1,6 +1,6 @@
 const pool = require('@configs/database');
 
-const session = {
+const Session = {
     read: async (id) => {
         const [rows] = await pool.execute('SELECT * FROM sessions WHERE session_id = ? AND expiry > NOW()', [id]);
         return rows;
@@ -13,14 +13,18 @@ const session = {
       const [result] = await pool.execute('INSERT INTO sessions (session_id, user_id, user_agent, expiry, last_activity) VALUES (?, ?, ?, ?, NOW())', [session_id, user_id, user_agent, expiry]);
       return result;
     },
-    // findByUsername: async (username) => {
-    //     const [rows] = await pool.execute('SELECT * FROM users WHERE username = ?', [username]);
-    //     return rows[0];
-    // },
+    getSessionId: async () => {
+        const [rows] = await pool.execute('SELECT session_id FROM sessions WHERE last_activity < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND terminated_at IS NULL');
+        return rows;
+    },
+    updateTerminatedAt: async (id) => {
+        const [result] = await pool.execute('UPDATE sessions SET terminated_at = NOW() WHERE session_id = ?', [id]);
+        return result;
+    },
     // delete: async (id) => {
     //     const [result] = await pool.execute('DELETE FROM users WHERE id = ?', [id]);
     //     return result;
     // }
 };
 
-module.exports = session;
+module.exports = Session;

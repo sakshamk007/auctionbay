@@ -1,6 +1,6 @@
 const pool = require('@configs/database');
 
-const user = {
+const User = {
     read: async (email) => {
         const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
         return rows;
@@ -26,4 +26,4 @@ const user = {
     // }
 };
 
-module.exports = user;
+module.exports = User;

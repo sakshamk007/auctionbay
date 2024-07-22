@@ -19,7 +19,9 @@ router.get('/', (req,res)=>{
 })
 
 router.get('/welcome', authenticate, async (req,res)=>{
-    const [rows] = await pool.query('SELECT * FROM wishlist WHERE user_id = ?', [req.cookies.user_id]);
+    // const [rows] = await pool.query('SELECT * FROM wishlist WHERE user_id = ?', [req.cookies.user_id]);
+    const user_id = req.cookies.user_id;
+    const rows = await Wishlist.findByUserId(user_id);
     res.render('web/layouts/landing', {layout: "web/layouts/landing", page: 'loggedin', rows: rows})
 })
 
@@ -110,7 +112,9 @@ router.post('/wishlist-startbid', authenticate, async (req,res)=>{
     const { wishlist_id } = req.body;
     const rows = await Bid.findByBidId(wishlist_id);
     const row = rows[0];
-    const { user_id, bid_id, name, type, title, description, auction, price, date, time } = row;
+    const { user_id, bid_id, name, type, title, description, auction, price, time } = row;
+    let {date} = row;
+    date = date.toString().split('00:00:00')[0];
     try {
         const imageData = await Image.findByImageId(wishlist_id);
         const imagePath = imageData.length > 0 ? imageData[0].image_path : null;

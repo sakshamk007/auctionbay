@@ -9,6 +9,10 @@ const Wishlist = {
         const [result] = await pool.execute('INSERT INTO wishlist (wishlist_id, user_id, title) VALUES (?, ?, ?)', [bid_id, user_id, title]);
         return result;
     },
+    findByUserId: async (user_id) => {
+        const [rows] = await pool.execute('SELECT * FROM wishlist WHERE user_id = ?', [user_id]);
+        return rows;
+    },
     // delete: async (id) => {
     //     const [result] = await pool.execute('DELETE FROM bids WHERE id = ?', [id]);
     //     return result;

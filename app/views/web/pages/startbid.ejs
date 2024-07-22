@@ -42,7 +42,11 @@
                     <button type="submit" class="wishlist bg-cyan-700 rounded-lg p-2">Save to wishlist</button>
                 </form>
                 <div class="text-center">Bidding will be activated on <%= date %> at <%= time %></div>
-                <button class="bg-cyan-700 rounded-lg p-2">Start Bidding</button>
+                <form action="/bid" method="POST">
+                    <input type="hidden" name="user_id" value="<%= user_id %>">
+                    <input type="hidden" name="auction" value="<%= auction %>">
+                    <button type="submit" class="bg-cyan-700 rounded-lg p-2">Start Bidding</button>
+                </form>
             </div>
         </div>
     </div>

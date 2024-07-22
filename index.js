@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
-const  path = require('path');
+const path = require('path');
 const debugStartUp = require('debug')('app:startup');
 const expressLayouts = require('express-ejs-layouts');
 require('dotenv').config();
@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'app', 'views'));
 app.use(expressLayouts);
-app.set('layout', 'web/layouts/auth', 'web/layouts/landing', 'web/pages/postbid', 'web/pages/checkbid', 'web/pages/startbid', 'web/pages/mybid');
+app.set('layout', 'web/layouts/auth', 'web/layouts/landing', 'web/pages/postbid', 'web/pages/checkbid', 'web/pages/startbid', 'web/pages/mybid', 'web/pages/bid');
 
 // require('@routes/admin.routes')(app);
 // require('@routes/api.routes')(app);
