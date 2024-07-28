@@ -10,6 +10,7 @@ const Image = require('@models/image.model');
 const Wishlist = require('@models/wishlist.model');
 const Users = require('@models/user.model');
 const Contracts = require('@models/contracts.model');
+const Profile = require('@models/profile.model');
 const { v4: uuidv4 } = require('uuid');
 
 // const asyncHandler = fn => (req, res, next) => {
@@ -179,11 +180,13 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
 
 router.get('/bids-and-timer', authenticate, async (req, res) => {
     const { bid_id, auction, price } = req.query;
-    let [rows] = await pool.query('SELECT timer FROM bids WHERE bid_id = ?', [bid_id])
+    // let [rows] = await pool.query('SELECT timer FROM bids WHERE bid_id = ?', [bid_id])
+    let rows = await Bid.getTimer(bid_id)
     let timer = rows[0].timer
     if (timer > 0) {
         timer--;
-        await pool.query('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id])
+        // await pool.query('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id])
+        await Bid.updateTimer(timer, bid_id)
         if (auction === 'forward') {
             const rows = await Contracts.browseDesc(bid_id);
             const maxBid = await Contracts.getMaxBid(bid_id);
@@ -209,6 +212,25 @@ router.get('/bids-and-timer', authenticate, async (req, res) => {
 
 router.get('/deal', authenticate, async (req, res) => {
     res.render('web/pages/deal', {layout: "web/pages/deal"})
+})
+
+router.get('/profile', authenticate, async (req, res) => {
+    const user_id = req.cookies.user_id;
+    const email = await Users.getEmailId(user_id);
+    res.render('web/pages/profile', {layout: "web/pages/profile", user_id, email})
+})
+
+router.post('/profile', authenticate, async (req, res) => {
+    const {user_id, email, contact, username, first, last, experience} = req.body;
+    // const [rows] = await pool.query('SELECT * FROM profile WHERE username = ?', [username]);
+    const rows = await Profile.browse(username, email);
+    if (rows.length > 0) {
+        return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'Username or Email already exists' });
+    }
+    else {
+        await pool.query('INSERT INTO profile (user_id, email, contact_no, username, first_name, last_name, years_of_experience) VALUES (?, ?, ?, ?, ?, ?, ?)', [user_id, email, contact, username, first, last, experience]);
+        return res.status(200).render('web/layouts/auth', { page: 'success', status: 200, message: 'Profile updated successfully' });
+    }
 })
 
 module.exports = router;
