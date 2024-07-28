@@ -1,9 +1,4 @@
 @font-face {
-    font-family: 'title_font';
-    src: url('../fonts/title_font.otf') format('truetype');
-}
-
-@font-face {
     font-family: 'body_font';
-    src: url('../fonts/body_font.ttf') format('truetype');
+    src: url('../fonts/Roboto-Regular.ttf') format('truetype');
 }
