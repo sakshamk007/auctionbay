@@ -10,7 +10,7 @@ const Wishlist = {
         return result;
     },
     findByUserId: async (user_id) => {
-        const [rows] = await pool.execute('SELECT * FROM wishlist WHERE user_id = ?', [user_id]);
+        const [rows] = await pool.execute('SELECT * FROM wishlist WHERE user_id = ? AND wishlist_id IN (SELECT bid_id FROM bids WHERE timer > 0);', [user_id]);
         return rows;
     },
     // delete: async (id) => {

@@ -9,10 +9,10 @@ const User = {
       const [result] = await pool.execute('INSERT INTO users (email, password, user_id) VALUES (?, ?, ?)', [email, password, id]);
       return result;
     },
-    // findByUsername: async (username) => {
-    //     const [rows] = await pool.execute('SELECT * FROM users WHERE username = ?', [username]);
-    //     return rows[0];
-    // },
+    getEmailId: async (id) => {
+        const [rows] = await pool.execute('SELECT email FROM users WHERE user_id = ?', [id]);
+        return rows[0];
+    },
     // update: async (id, username, password, email) => {
     //     const [result] = await pool.execute(
     //     'UPDATE users SET username = ?, password = ?, email = ? WHERE id = ?',

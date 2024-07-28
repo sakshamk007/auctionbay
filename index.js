@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'app', 'views'));
 app.use(expressLayouts);
-app.set('layout', 'web/layouts/auth', 'web/layouts/landing', 'web/pages/postbid', 'web/pages/checkbid', 'web/pages/startbid', 'web/pages/mybid', 'web/pages/bid');
+app.set('layout', 'web/layouts/auth', 'web/layouts/landing', 'web/pages/postbid', 'web/pages/checkbid', 'web/pages/startbid', 'web/pages/mybid', 'web/pages/bid', 'web/pages/deal');
 
 // require('@routes/admin.routes')(app);
 // require('@routes/api.routes')(app);

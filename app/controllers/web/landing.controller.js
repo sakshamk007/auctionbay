@@ -8,6 +8,8 @@ const pool = require('@configs/database');
 const Bid = require('@models/bid.model');
 const Image = require('@models/image.model');
 const Wishlist = require('@models/wishlist.model');
+const Users = require('@models/user.model');
+const Contracts = require('@models/contracts.model');
 const { v4: uuidv4 } = require('uuid');
 
 // const asyncHandler = fn => (req, res, next) => {
@@ -73,11 +75,12 @@ router.get('/startbid', authenticate, async (req,res)=>{
 
 router.post('/startbid', authenticate, async (req, res) => {
     const user_id = req.cookies.user_id;
+    const email = await Users.getEmailId(user_id);
     const { bid_id, name, type, title, description, auction, price, date, time } = req.body;
     try {
         const imageData = await Image.findByImageId(bid_id);
         const imagePath = imageData.length > 0 ? imageData[0].image_path : null;
-        res.render('web/pages/startbid', {layout: "web/pages/startbid", user_id, bid_id, name, type, title, description, auction, price, date, time, imagePath});
+        res.render('web/pages/startbid', {layout: "web/pages/startbid", user_id, bid_id, name, type, title, description, auction, price, date, time, email, imagePath});
     } catch (err) {
         console.error('Error fetching image path:', err);
         res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error fetching image path' });
@@ -123,6 +126,89 @@ router.post('/wishlist-startbid', authenticate, async (req,res)=>{
         console.error('Error fetching image path:', err);
         res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error fetching image path' });
     }   
+})
+
+router.post('/bid', authenticate, async (req,res)=>{
+    const { auction, bid_id, user_id, price } = req.body;
+    if (auction === 'forward'){
+        const rows = await Contracts.browseDesc(bid_id);
+        const maxBid = await Contracts.getMaxBid(bid_id);
+        let currentBid = maxBid.max_value
+        if (currentBid === null){
+            currentBid = price;
+        }
+        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price})
+    }
+    else if (auction === 'reverse'){
+        const rows = await Contracts.browseAsc(bid_id);
+        const minBid = await Contracts.getMinBid(bid_id);
+        let currentBid = minBid.min_value
+        if (currentBid === null){
+            currentBid = price;
+        }
+        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price})
+    }
+})
+
+router.post('/submit-bid', authenticate, async (req,res)=>{
+    const { user_id, bidValue, auction, bid_id, currentBid } = req.body;
+    const value = Number(bidValue);
+    const email = await Users.getEmailId(user_id);
+    if (auction === 'forward'){
+        if (value < currentBid || value === currentBid){
+            return res.status(400).json({ error: 'Bid Value should be greater than Current Bid' });
+        }
+        else {
+            await Contracts.add(user_id, bid_id, value, email.email, auction);
+            return res.status(200).json({ message: 'Bid submitted successfully' });
+        }
+    }
+    else if (auction === 'reverse'){
+        if (value > currentBid || value === currentBid){
+            return res.status(400).json({ error: 'Bid Value should be less than Current Bid' });
+        }
+        else if (value < 0 || value === 0){
+            return res.status(400).json({ error: 'Bid Value should not be less than or equal to 0' });
+        }
+        else {
+            await Contracts.add(user_id, bid_id, value, email.email, auction);
+            return res.status(200).json({ message: 'Bid submitted successfully' });
+        }
+    }
+})
+
+router.get('/bids-and-timer', authenticate, async (req, res) => {
+    const { bid_id, auction, price } = req.query;
+    let [rows] = await pool.query('SELECT timer FROM bids WHERE bid_id = ?', [bid_id])
+    let timer = rows[0].timer
+    if (timer > 0) {
+        timer--;
+        await pool.query('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id])
+        if (auction === 'forward') {
+            const rows = await Contracts.browseDesc(bid_id);
+            const maxBid = await Contracts.getMaxBid(bid_id);
+            let currentBid = maxBid.max_value
+            if (currentBid === null){
+                currentBid = price;
+            }
+            return res.json({ rows, currentBid, timer});
+        } else if (auction === 'reverse') {
+            const rows = await Contracts.browseAsc(bid_id);
+            const minBid = await Contracts.getMinBid(bid_id);
+            let currentBid = minBid.min_value
+            if (currentBid === null){
+                currentBid = price;
+            }
+            return res.json({ rows, currentBid, timer});
+        }
+    }
+    else {
+        return res.status(400).json({ error: 'Bidding ended' });
+    }
+});
+
+router.get('/deal', authenticate, async (req, res) => {
+    res.render('web/pages/deal', {layout: "web/pages/deal"})
 })
 
 module.exports = router;

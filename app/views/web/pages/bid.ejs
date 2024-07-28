@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bid Room</title>
+    <link href="/src/input.css" type="text/css" rel="stylesheet">
+    <link href="/src/output.css" type="text/css" rel="stylesheet">
+    <style>
+        .num-button{
+            background: linear-gradient(to bottom, #15803d, #14532d);
+            padding: 0.5rem;
+            border-radius: 0.125rem;
+            width: 50px;
+        }
+        .suggestion-btn{
+            background: linear-gradient(to bottom, #0284c7, #0369a1);
+            padding: 0px 6px 6px 6px;
+            border-radius: 6px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000000;
+            padding: 8px;
+        }
+        th {
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="text-white font-body_font flex">
+    <div class="min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+        <div class="flex py-14 px-20 justify-between w-full text-3xl text-yellow-400">
+            <div>Starting amount: <%= price %></div>
+            <div id="timer">5:00</div>
+            <div id="currentBid">Current Bid: <span class="text-3xl py-0">&#8377;</span>0</div>
+        </div>
+        <div class="flex justify-between text-xl w-full px-20">
+            <div>
+                <table class="text-white">
+                    <thead class="bg-violet-900">
+                        <tr>
+                            <th class="w-[500px]">Name</th>
+                            <th class="w-[300px]">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-gray-800" id="bidTableBody">
+                        
+                    </tbody>
+                </table>  
+            </div>
+            <div id="numpad" class="flex flex-col gap-4 justify-center items-center">
+                <span>Bid suggestions</span>
+                <div id="suggestions" class="flex justify-center items-center gap-4"></div>
+                <input type="number" id="bidValue" readonly class="text-black p-2 w-[250px] rounded-lg">
+                <div id="numberPad" class="flex flex-col gap-4 text-xl">
+                    <div class="flex justify-center items-center gap-4">
+                        <button class="num-button" data-value="7">7</button>
+                        <button class="num-button" data-value="8">8</button>
+                        <button class="num-button" data-value="9">9</button>
+                    </div>
+                    <div class="flex justify-center items-center gap-4">
+                        <button class="num-button" data-value="4">4</button>
+                        <button class="num-button" data-value="5">5</button>
+                        <button class="num-button" data-value="6">6</button>
+                    </div>
+                    <div class="flex justify-center items-center gap-4">
+                        <button class="num-button" data-value="1">1</button>
+                        <button class="num-button" data-value="2">2</button>
+                        <button class="num-button" data-value="3">3</button>
+                    </div>
+                    <div class="flex justify-center items-center gap-4">
+                        <button class="num-button" data-value="0">0</button>
+                    </div>
+                </div>
+                <div class="flex justify-center items-center gap-4">
+                    <button id="clear" class="bg-gradient-to-b from-sky-700 to-sky-900 p-3 rounded-lg">Clear</button>
+                    <button id="submitBid" class="bg-gradient-to-b from-sky-700 to-sky-900 p-3 rounded-lg">Submit</button>
+                </div>
+              </div>
+        </div>
+    </div>
+
+    <script>       
+
+        const numButtons = document.querySelectorAll('.num-button');
+        const bidValueInput = document.getElementById('bidValue');
+            numButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                bidValueInput.value += button.getAttribute('data-value');
+            });
+            });
+            document.getElementById('clear').addEventListener('click', () => {
+            bidValueInput.value = '';
+        });
+
+        document.getElementById('submitBid').addEventListener('click', async () => {
+            const bidValue = parseFloat(document.getElementById('bidValue').value);
+            const user_id = '<%= user_id %>';
+            const bid_id = '<%= bid_id %>';
+            const auction = '<%= auction %>';
+            const currentBid = Number('<%= currentBid %>')
+            const response = await fetch('/submit-bid', {
+                method: 'POST',
+                headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id, bidValue, auction, bid_id, currentBid })
+            })
+            const bidValueInput = document.getElementById('bidValue');
+            bidValueInput.value = '';
+            const result = await response.json();
+            if (!response.ok) {
+                alert(result.error);
+            }
+        });
+
+        function countDigits(number) {
+        const numberString = Math.abs(number).toString();
+            return numberString.length;
+        }       
+
+        async function fetchBidsAndTimer() {
+            const response = await fetch(`/bids-and-timer?bid_id=<%= bid_id %>&auction=<%= auction %>&price=<%= price %>`);
+            const result = await response.json();
+            if (!response.ok) {
+                window.location.href = '/deal';
+                return;
+            }
+            const { rows, timer } = result;
+            let {currentBid} = result
+            const minutes = Math.floor(timer / 60);
+            const seconds = timer % 60;
+            document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            currentBid = Number(currentBid)
+            const bidTableBody = document.getElementById('bidTableBody');
+            bidTableBody.innerHTML = '';
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                const tdEmail = document.createElement('td');
+                const tdValue = document.createElement('td');
+                tdEmail.innerText = row.email;
+                tdValue.innerText = row.value;
+                tr.appendChild(tdEmail);
+                tr.appendChild(tdValue);
+                bidTableBody.appendChild(tr);
+            });
+
+            document.getElementById('currentBid').innerHTML = `Current Bid: <span class="text-3xl py-0">&#8377;</span>${currentBid}`;
+
+            const auction = '<%= auction %>';
+            const suggestions = document.getElementById('suggestions');
+            const factor = Math.pow(10, (countDigits(currentBid)-2));
+            if (auction === 'forward') {
+                const suggestion1 = currentBid + factor;
+                const suggestion2 = currentBid + (2 * factor);
+                const suggestion3 = currentBid + (3 * factor);
+                suggestions.innerHTML = `
+                <button class="suggestion-btn"><span class="text-3xl py-0">&#8377;</span>${suggestion1}</button>
+                <button class="suggestion-btn"><span class="text-3xl py-0">&#8377;</span>${suggestion2}</button>
+                <button class="suggestion-btn"><span class="text-3xl py-0">&#8377;</span>${suggestion3}</button>
+                `;
+            } else {
+                const suggestion1 = currentBid - factor;
+                const suggestion2 = currentBid - (2 * factor);
+                const suggestion3 = currentBid - (3 * factor);
+                suggestions.innerHTML = `
+                <button class="suggestion-btn"><span class="text-3xl py-0">&#8377;</span>${suggestion1}</button>
+                <button class="suggestion-btn"><span class="text-3xl py-0">&#8377;</span>${suggestion2}</button>
+                <button class="suggestion-btn"><span class="text-3xl py-0">&#8377;</span>${suggestion3}</button>
+                `;
+            }
+
+            document.querySelectorAll('.suggestion-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    bidValueInput.value = button.innerText.replace('₹', '');
+                });
+            });  
+        }
+        // async function longPolling() {        
+        //     await fetchBidsAndTimer();
+        //     setTimeout(longPolling, 1000);
+        // }
+        // longPolling();
+        setInterval(async () => {
+            await fetchBidsAndTimer();
+        }, 1000);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchBidsAndTimer();
+        });
+
+        window.addEventListener('beforeunload', function (e) {
+            const confirmationMessage = 'Are you sure you want to leave this page?';
+            (e || window.event).returnValue = confirmationMessage;
+            window.location.href = '/welcome';
+            return confirmationMessage;
+        });
+
+        window.addEventListener('unload', function () {
+            if (!document.hidden) {
+            }
+        });
+
+    </script>
+</body>
+</html>

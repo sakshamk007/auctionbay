@@ -10,6 +10,11 @@
         strong{
             color: yellow;
         }
+        .disabled {
+            background-color: grey;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body class="text-white font-body_font flex">
@@ -22,7 +27,7 @@
                 <div class="text-xl"><strong>Title:</strong> <%= title %></div>
                 <div class="text-xl"><strong>Description:</strong> <%= description %></div>        
                 <div class="text-xl"><strong>Auction type:</strong> <%= auction %></div>
-                <div class="text-xl"><strong>Price:</strong> <%= price %></div>
+                <div class="text-xl"><strong>Starting amount:</strong> <%= price %></div>
                 <div class="text-xl"><strong>Date:</strong> <%= date %></div>
                 <div class="text-xl"><strong>Time:</strong> <%= time %></div>
             </div>
@@ -44,11 +49,30 @@
                 <div class="text-center">Bidding will be activated on <%= date %> at <%= time %></div>
                 <form action="/bid" method="POST">
                     <input type="hidden" name="user_id" value="<%= user_id %>">
+                    <input type="hidden" name="bid_id" value="<%= bid_id %>">
                     <input type="hidden" name="auction" value="<%= auction %>">
-                    <button type="submit" class="bg-cyan-700 rounded-lg p-2">Start Bidding</button>
+                    <input type="hidden" name="price" value="<%= price %>">
+                    <button type="submit" id="startBiddingBtn" class="bg-cyan-700 rounded-lg p-2 disabled">Start Bidding</button>
                 </form>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const startBiddingBtn = document.getElementById('startBiddingBtn');
+            const bidDate = new Date('<%= date %> <%= time %>');
+            function checkBidTime() {
+                const currentTime = new Date();
+                if (currentTime >= bidDate) {
+                    startBiddingBtn.disabled = false;
+                    startBiddingBtn.classList.remove('disabled');
+                } else {
+                    setTimeout(checkBidTime, 1000);
+                }
+            }
+            checkBidTime();
+        });
+    </script>
 </body>
 </html>

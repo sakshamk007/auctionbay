@@ -2,7 +2,7 @@ const pool = require('@configs/database');
 
 const Bid = {
     browse: async () => {
-        const [result] = await pool.execute('SELECT * FROM bids WHERE DATE(date) > DATE(NOW()) OR (DATE(date) = DATE(NOW()) AND TIME(time) >= TIME(NOW())) ORDER BY DATE(date) ASC, TIME(time) ASC');
+        const [result] = await pool.execute('SELECT * FROM bids WHERE timer > 0 AND DATE(date) > DATE(NOW()) OR (DATE(date) = DATE(NOW()) AND TIME(time) >= TIME(NOW())) ORDER BY DATE(date) ASC, TIME(time) ASC');
         return result;
     },
     add: async (bid_id, user_id, name, email, title, auction, date, type, contact, description, price, time) => {
