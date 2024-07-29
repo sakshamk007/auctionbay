@@ -8,8 +8,8 @@ const pool = require('@configs/database');
 const Bid = require('@models/bid.model');
 const Image = require('@models/image.model');
 const Wishlist = require('@models/wishlist.model');
-const Users = require('@models/user.model');
-const Contracts = require('@models/contracts.model');
+const User = require('@models/user.model');
+const Contract = require('@models/contract.model');
 const Profile = require('@models/profile.model');
 const { v4: uuidv4 } = require('uuid');
 
@@ -76,7 +76,7 @@ router.get('/startbid', authenticate, async (req,res)=>{
 
 router.post('/startbid', authenticate, async (req, res) => {
     const user_id = req.cookies.user_id;
-    const email = await Users.getEmailId(user_id);
+    const email = await User.getEmailId(user_id);
     const { bid_id, name, type, title, description, auction, price, date, time } = req.body;
     try {
         const imageData = await Image.findByImageId(bid_id);
@@ -131,40 +131,45 @@ router.post('/wishlist-startbid', authenticate, async (req,res)=>{
 
 router.post('/bid', authenticate, async (req,res)=>{
     const { auction, bid_id, user_id, price } = req.body;
+    const username = await Profile.getUsername(user_id);
     if (auction === 'forward'){
-        const rows = await Contracts.browseDesc(bid_id);
-        const maxBid = await Contracts.getMaxBid(bid_id);
+        const rows = await Contract.browseDesc(bid_id);
+        const maxBid = await Contract.getMaxBid(bid_id);
         let currentBid = maxBid.max_value
         if (currentBid === null){
             currentBid = price;
         }
-        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price})
+        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price, username})
     }
     else if (auction === 'reverse'){
-        const rows = await Contracts.browseAsc(bid_id);
-        const minBid = await Contracts.getMinBid(bid_id);
+        const rows = await Contract.browseAsc(bid_id);
+        const minBid = await Contract.getMinBid(bid_id);
         let currentBid = minBid.min_value
         if (currentBid === null){
             currentBid = price;
         }
-        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price})
+        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price, username})
     }
 })
 
 router.post('/submit-bid', authenticate, async (req,res)=>{
-    const { user_id, bidValue, auction, bid_id, currentBid } = req.body;
+    const { user_id, bidValue, auction, bid_id } = req.body;
     const value = Number(bidValue);
-    const email = await Users.getEmailId(user_id);
+    const email = await User.getEmailId(user_id);
     if (auction === 'forward'){
+        const maxBid = await Contract.getMaxBid(bid_id);
+        let currentBid = maxBid.max_value
         if (value < currentBid || value === currentBid){
             return res.status(400).json({ error: 'Bid Value should be greater than Current Bid' });
         }
         else {
-            await Contracts.add(user_id, bid_id, value, email.email, auction);
+            await Contract.add(user_id, bid_id, value, email.email, auction);
             return res.status(200).json({ message: 'Bid submitted successfully' });
         }
     }
     else if (auction === 'reverse'){
+        const minBid = await Contract.getMinBid(bid_id);
+        let currentBid = minBid.min_value
         if (value > currentBid || value === currentBid){
             return res.status(400).json({ error: 'Bid Value should be less than Current Bid' });
         }
@@ -172,7 +177,7 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
             return res.status(400).json({ error: 'Bid Value should not be less than or equal to 0' });
         }
         else {
-            await Contracts.add(user_id, bid_id, value, email.email, auction);
+            await Contract.add(user_id, bid_id, value, email.email, auction);
             return res.status(200).json({ message: 'Bid submitted successfully' });
         }
     }
@@ -188,16 +193,16 @@ router.get('/bids-and-timer', authenticate, async (req, res) => {
         // await pool.query('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id])
         await Bid.updateTimer(timer, bid_id)
         if (auction === 'forward') {
-            const rows = await Contracts.browseDesc(bid_id);
-            const maxBid = await Contracts.getMaxBid(bid_id);
+            const rows = await Contract.browseDesc(bid_id);
+            const maxBid = await Contract.getMaxBid(bid_id);
             let currentBid = maxBid.max_value
             if (currentBid === null){
                 currentBid = price;
             }
             return res.json({ rows, currentBid, timer});
         } else if (auction === 'reverse') {
-            const rows = await Contracts.browseAsc(bid_id);
-            const minBid = await Contracts.getMinBid(bid_id);
+            const rows = await Contract.browseAsc(bid_id);
+            const minBid = await Contract.getMinBid(bid_id);
             let currentBid = minBid.min_value
             if (currentBid === null){
                 currentBid = price;
@@ -216,8 +221,14 @@ router.get('/deal', authenticate, async (req, res) => {
 
 router.get('/profile', authenticate, async (req, res) => {
     const user_id = req.cookies.user_id;
-    const email = await Users.getEmailId(user_id);
-    res.render('web/pages/profile', {layout: "web/pages/profile", user_id, email})
+    const email = await User.getEmailId(user_id);
+    const rows = await Profile.findByEmail(email.email)
+    if (rows.length === 0) {
+        res.render('web/layouts/auth', { page: 'profile', user_id, email });
+    }
+    else{
+        res.render('web/pages/profile', {layout: "web/pages/profile", rows})
+    }
 })
 
 router.post('/profile', authenticate, async (req, res) => {
@@ -228,9 +239,16 @@ router.post('/profile', authenticate, async (req, res) => {
         return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'Username or Email already exists' });
     }
     else {
-        await pool.query('INSERT INTO profile (user_id, email, contact_no, username, first_name, last_name, years_of_experience) VALUES (?, ?, ?, ?, ?, ?, ?)', [user_id, email, contact, username, first, last, experience]);
+        // await pool.query('INSERT INTO profile (user_id, email, contact_no, username, first_name, last_name, years_of_experience) VALUES (?, ?, ?, ?, ?, ?, ?)', [user_id, email, contact, username, first, last, experience]);
+        await Profile.add(user_id, email, contact, username, first, last, experience)
         return res.status(200).render('web/layouts/auth', { page: 'success', status: 200, message: 'Profile updated successfully' });
     }
 })
+
+router.get('/signout', (req, res) => {
+    res.clearCookie('session_id');
+    res.clearCookie('user_id');
+    res.redirect('/');
+});
 
 module.exports = router;

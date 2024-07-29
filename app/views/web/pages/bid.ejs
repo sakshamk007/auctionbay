@@ -7,6 +7,15 @@
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
     <style>
+        button {
+            transform: scale(1);
+            transition: transform 150ms ease-in-out;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
         .num-button{
             background: linear-gradient(to bottom, #15803d, #14532d);
             padding: 0.5rem;
@@ -101,13 +110,12 @@
             const user_id = '<%= user_id %>';
             const bid_id = '<%= bid_id %>';
             const auction = '<%= auction %>';
-            const currentBid = Number('<%= currentBid %>')
             const response = await fetch('/submit-bid', {
                 method: 'POST',
                 headers: {
             'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ user_id, bidValue, auction, bid_id, currentBid })
+            body: JSON.stringify({ user_id, bidValue, auction, bid_id })
             })
             const bidValueInput = document.getElementById('bidValue');
             bidValueInput.value = '';
@@ -141,7 +149,7 @@
                 const tr = document.createElement('tr');
                 const tdEmail = document.createElement('td');
                 const tdValue = document.createElement('td');
-                tdEmail.innerText = row.email;
+                tdEmail.innerText = '<%= username.username %>' || row.email;
                 tdValue.innerText = row.value;
                 tr.appendChild(tdEmail);
                 tr.appendChild(tdValue);

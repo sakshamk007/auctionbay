@@ -16,6 +16,8 @@
                 <%- include('../partials/signup') %>
             <% } else if (page === 'signin') { %>
                 <%- include('../partials/signin') %>
+            <% } else if (page === 'profile') { %>
+                <%- include('../partials/profile') %>
             <% } else if (page === 'error') { %>
                 <%- include('../partials/error', {status: status, message: message}) %>
             <% } else if (page === 'success') { %>

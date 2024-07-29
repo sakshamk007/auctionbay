@@ -44,7 +44,7 @@
                     <input type="hidden" name="user_id" value="<%= user_id %>">
                     <input type="hidden" name="bid_id" value="<%= bid_id %>">
                     <input type="hidden" name="title" value="<%= title %>">
-                    <button type="submit" class="wishlist bg-cyan-700 rounded-lg p-2 text-xl">Save to wishlist</button>
+                    <button type="submit" class="wishlist bg-cyan-700 rounded-lg p-2 text-xl transform transition-transform duration-150 ease-in-out active:scale-95">Save to wishlist</button>
                 </form>
                 <div class="text-center text-xl">Bidding will be activated on <%= date %> at <%= time %></div>
                 <form action="/bid" method="POST">
@@ -52,7 +52,7 @@
                     <input type="hidden" name="bid_id" value="<%= bid_id %>">
                     <input type="hidden" name="auction" value="<%= auction %>">
                     <input type="hidden" name="price" value="<%= price %>">
-                    <button type="submit" id="startBiddingBtn" class="bg-cyan-700 rounded-lg p-2 disabled text-xl" disabled>Start Bidding</button>
+                    <button type="submit" id="startBiddingBtn" class="bg-cyan-700 rounded-lg p-2 disabled text-xl transform transition-transform duration-150 ease-in-out active:scale-95" disabled>Start Bidding</button>
                 </form>
             </div>
         </div>

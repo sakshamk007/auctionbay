@@ -9,6 +9,14 @@ const Profile = {
         const [result] = await pool.execute('INSERT INTO profile (user_id, email, contact_no, username, first_name, last_name, years_of_experience) VALUES (?, ?, ?, ?, ?, ?, ?)', [user_id, email, contact, username, first, last, experience]);
         return result;
     },
+    findByEmail: async (email) => {
+        const [rows] = await pool.execute('SELECT * FROM profile WHERE email = ?', [email]);
+        return rows;
+    },
+    getUsername: async (user_id) => {
+        const [rows] = await pool.execute('SELECT username FROM profile WHERE user_id = ?', [user_id]);
+        return rows[0];
+    }
 }
 
 module.exports = Profile;

@@ -1,0 +1,15 @@
+<form action="/profile" method="post" class="flex items-center flex-col gap-6">
+    <div class="text-4xl">Profile</div>
+    <input type="hidden" name="user_id" value="<%= user_id %>">
+    <input type="email" name="email" class="rounded-md text-black p-2 text-sm w-[400px]" placeholder="<%= email.email %>" value="<%= email.email %>" readonly>
+    <input type="text" name="username" placeholder="username" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+    <div class="flex gap-5">
+        <input type="text" name="first" placeholder="first name" class="rounded-md text-black p-2 text-sm w-[190px]" required>
+        <input type="text" name="last" placeholder="last name" class="rounded-md text-black p-2 text-sm w-[190px]" required>
+    </div>
+    <div class="flex gap-5">
+        <input type="text" name="contact" placeholder="contact number" class="rounded-md text-black p-2 text-sm w-[190px]" required>
+        <input type="text" name="experience" placeholder="years of experience" class="rounded-md text-black p-2 text-sm w-[190px]" required>
+    </div>
+    <button type="submit" class="w-[400px] bg-violet-800 p-2 rounded-lg h-12 text-xl transform transition-transform duration-150 ease-in-out active:scale-95">Save</button>
+</form>
