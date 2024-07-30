@@ -606,8 +606,24 @@ video {
   right: 1rem;
 }
 
+.right-5 {
+  right: 1.25rem;
+}
+
+.right-6 {
+  right: 1.5rem;
+}
+
+.right-8 {
+  right: 2rem;
+}
+
 .top-0 {
   top: 0px;
+}
+
+.top-1 {
+  top: 0.25rem;
 }
 
 .top-2 {
@@ -620,6 +636,26 @@ video {
 
 .top-4 {
   top: 1rem;
+}
+
+.right-12 {
+  right: 3rem;
+}
+
+.right-1 {
+  right: 0.25rem;
+}
+
+.right-20 {
+  right: 5rem;
+}
+
+.right-16 {
+  right: 4rem;
+}
+
+.right-14 {
+  right: 3.5rem;
 }
 
 .-z-10 {
@@ -681,6 +717,10 @@ video {
   margin-bottom: 2rem;
 }
 
+.mt-10 {
+  margin-top: 2.5rem;
+}
+
 .mt-12 {
   margin-top: 3rem;
 }
@@ -695,10 +735,6 @@ video {
 
 .mt-8 {
   margin-top: 2rem;
-}
-
-.mt-10 {
-  margin-top: 2.5rem;
 }
 
 .block {
@@ -773,12 +809,13 @@ video {
   height: 300px;
 }
 
-.h-\[450px\] {
-  height: 450px;
-}
-
 .h-auto {
   height: auto;
+}
+
+.h-fit {
+  height: -moz-fit-content;
+  height: fit-content;
 }
 
 .h-full {
@@ -789,8 +826,28 @@ video {
   height: 100vh;
 }
 
+.h-\[40\%\] {
+  height: 40%;
+}
+
+.h-\[20\%\] {
+  height: 20%;
+}
+
 .max-h-\[450px\] {
   max-height: 450px;
+}
+
+.max-h-\[\] {
+  max-height: ;
+}
+
+.max-h-\[40\] {
+  max-height: 40;
+}
+
+.max-h-\[40\%\] {
+  max-height: 40%;
 }
 
 .min-h-\[400px\] {
@@ -799,6 +856,10 @@ video {
 
 .min-h-screen {
   min-height: 100vh;
+}
+
+.min-h-\[40\%\] {
+  min-height: 40%;
 }
 
 .w-1 {
@@ -861,6 +922,10 @@ video {
   width: 180px;
 }
 
+.w-\[190px\] {
+  width: 190px;
+}
+
 .w-\[250px\] {
   width: 250px;
 }
@@ -912,30 +977,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[200px\] {
-  width: 200px;
-}
-
-.w-\[190px\] {
-  width: 190px;
-}
-
-.w-\[1px\] {
-  width: 1px;
-}
-
-.w-\[185px\] {
-  width: 185px;
-}
-
-.w-\[0px\] {
-  width: 0px;
-}
-
-.w-\[\] {
-  width: ;
 }
 
 .flex-1 {
@@ -1018,6 +1059,10 @@ video {
   gap: 1rem;
 }
 
+.gap-5 {
+  gap: 1.25rem;
+}
+
 .gap-6 {
   gap: 1.5rem;
 }
@@ -1028,10 +1073,6 @@ video {
 
 .gap-9 {
   gap: 2.25rem;
-}
-
-.gap-5 {
-  gap: 1.25rem;
 }
 
 .overflow-hidden {
@@ -1052,6 +1093,12 @@ video {
 
 .overflow-y-scroll {
   overflow-y: scroll;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rounded {
