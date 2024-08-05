@@ -22,7 +22,7 @@
 </head>
 <body class="text-white font-body_font flex">
     <div class="absolute top-0 z-[-2] min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
-        <div class="text-5xl text-yellow-400 p-14 text-center">&lt; Check &gt;</div>
+        <div class="text-5xl text-yellow-400 p-14 text-center">&lt; Participated &gt;</div>
         <div class="flex justify-center items-center gap-10">
             <button class="forward w-[300px] text-center text-3xl py-4 rounded-full bg-gradient-to-b from-sky-700 to-sky-900 transform transition-transform duration-150 ease-in-out active:scale-95">Forward Auction</button>
             <button class="reverse opacity-50 w-[300px] text-center text-3xl py-4 rounded-full bg-gradient-to-b from-lime-700 to-lime-900 transform transition-transform duration-150 ease-in-out active:scale-95">Reverse Auction</button>
@@ -36,7 +36,7 @@
                     <th class="w-[120px]">Base Price</th>
                     <th class="w-[180px]">Date</th>
                     <th class="w-[80px]">Time</th>
-                    <th class="w-[120px]"></th>
+                    <th class="w-[150px]"></th>
                 </tr>
             </thead>
             <tbody class="bg-gray-800">
@@ -49,17 +49,9 @@
                         <td><%= row.date.toString().split('00:00:00')[0] %></td>
                         <td><%= row.time %></td>
                         <td>
-                            <form action="/startbid" method="POST">
+                            <form action="/participated-bids-status" method="POST">
                                 <input type="hidden" name="bid_id" value="<%= row.bid_id %>">
-                                <input type="hidden" name="name" value="<%= row.name %>">
-                                <input type="hidden" name="type" value="<%= row.type %>">
-                                <input type="hidden" name="title" value="<%= row.title %>">
-                                <input type="hidden" name="description" value="<%= row.description %>">
-                                <input type="hidden" name="auction" value="<%= row.auction %>">
-                                <input type="hidden" name="price" value="<%= row.price %>">
-                                <input type="hidden" name="date" value="<%= row.date.toString().split('00:00:00')[0] %>">
-                                <input type="hidden" name="time" value="<%= row.time %>">
-                                <button type="submit" class="interested bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 transform transition-transform duration-150 ease-in-out active:scale-95">Interested</button>
+                                <button type="submit" class="interested bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 transform transition-transform duration-150 ease-in-out active:scale-95">Check Status</button>
                             </form>
                         </td>
                     </tr>

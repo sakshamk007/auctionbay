@@ -29,6 +29,10 @@ const Bid = {
         const [rows] = await pool.execute('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id]);
         return rows;
     },
+    getUserId: async (userId) => {
+        const [rows] = await pool.execute('SELECT user_id FROM bids WHERE bid_id = ?', [userId]);
+        return rows[0];
+    },
     // delete: async (id) => {
     //     const [result] = await pool.execute('DELETE FROM bids WHERE id = ?', [id]);
     //     return result;

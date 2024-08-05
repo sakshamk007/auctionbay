@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aukshanz</title>
+    <link href="/src/input.css" type="text/css" rel="stylesheet">
+    <link href="/src/output.css" type="text/css" rel="stylesheet">
+</head>
+<body class="text-white font-body_font flex">
+    <div class="min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+        <div class="text-5xl text-yellow-400 p-14 text-center">&lt; Posted Status &gt;</div>
+        <form action="/posted-status" method="POST">
+            <div class="flex flex-col gap-8 justify-center items-center">
+                <input type="hidden" name="bid_id" value="<%= bid_id %>">
+                <div class="flex gap-8 justify-between w-[650px] items-center">
+                    <div class="text-xl">Username</div>
+                    <div class="bg-white rounded-md p-2 text-xl text-black">
+                        <input class="w-[400px]" name="username" value="<%= details.username %>" readonly>
+                    </div>
+                </div>
+                <div class="flex gap-8 justify-between w-[650px] items-center">
+                    <div class="text-xl">Name</div>
+                    <div class="bg-white rounded-md p-2 text-xl text-black">
+                        <input class="w-[400px]" name="name" value="<%= details.first_name %> <%= details.last_name %>" readonly>
+                    </div>
+                </div>
+                <div class="flex gap-8 justify-between w-[650px] items-center">
+                    <div class="text-xl">Contact Number</div>
+                    <div class="bg-white rounded-md p-2 text-xl text-black">
+                        <input class="w-[400px]" name="contact_no" value="<%= details.contact_no %>" readonly>
+                    </div>
+                </div>
+                <div class="flex gap-8 justify-between w-[650px] items-center">
+                    <div class="text-xl">Email</div>
+                    <div class="bg-white rounded-md p-2 text-xl text-black">
+                        <input class="w-[400px]" name="email" value="<%= details.email %>" readonly>
+                    </div>
+                </div>
+                <div class="flex gap-8 justify-between w-[650px] items-center">
+                    <div class="text-xl">Years of Experience</div>
+                    <div class="bg-white rounded-md p-2 text-xl text-black">
+                        <input class="w-[400px]" name="years_of_experience" value="<%= details.years_of_experience %>" readonly>
+                    </div>
+                </div>
+                <div class="flex gap-8 justify-between w-[650px] items-center">
+                    <div class="text-xl">Bid Amount</div>
+                    <div class="bg-white rounded-md p-2 text-xl text-black">
+                        <input class="w-[400px]" name="value" value="<%= value %>" readonly>
+                    </div>
+                </div>
+                <div class="flex gap-8 justify-between w-[650px] items-center">
+                    <% if (status) { %>
+                        <div class="text-xl">Status</div>
+                        <div class="w-[415px] flex gap-4">
+                            <div class="bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 text-xl w-[100px] text-center"><%= status %></div>
+                        </div>
+                    <% } else { %>                    
+                        <div class="text-xl">Do you accept?</div>
+                        <div class="w-[415px] flex gap-4">
+                            <button type="submit" name="response" value="yes" class="bg-gradient-to-b from-lime-700 to-lime-900 rounded-lg p-2 text-xl transform transition-transform duration-150 ease-in-out active:scale-95 w-[50px]">Yes</button>
+                            <button type="submit" name="response" value="no" class="bg-gradient-to-b from-red-700 to-red-900 rounded-lg p-2 text-xl transform transition-transform duration-150 ease-in-out active:scale-95 w-[50px]">No</button>                        
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </form>
+    </div> 
+</body>
+</html>

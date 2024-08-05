@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start Bid</title>
+    <title>Aukshanz</title>
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
     <style>
@@ -19,7 +19,7 @@
 </head>
 <body class="text-white font-body_font flex">
     <div class="min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
-        <div class="text-5xl text-yellow-400 p-14 text-center">&lt; Start Bidding &gt;</div>
+        <div class="text-5xl text-yellow-400 p-14 text-center">&lt; Start &gt;</div>
         <div class="flex w-full">
             <div class="flex flex-col justify-start gap-4 w-[65%] px-8">        
                 <div class="text-2xl"><strong>Company Type:</strong> <%= type %></div>        
@@ -35,7 +35,7 @@
                 <div class="flex flex-col gap-2">
                     <% if (imagePath) { %>
                         <div class="text-2xl"><strong>Image:</strong></div>
-                        <img src="/uploads/<%= imagePath %>" alt="Bid Image" class="h-[300px] object-cover border border-white">
+                        <img src="/uploads/<%= imagePath %>" alt="Image" class="h-[300px] object-cover border border-white">
                     <% } else { %>
                         <div class="text-2xl"><strong>No Image Available</strong></div>
                     <% } %>
@@ -44,15 +44,15 @@
                     <input type="hidden" name="user_id" value="<%= user_id %>">
                     <input type="hidden" name="bid_id" value="<%= bid_id %>">
                     <input type="hidden" name="title" value="<%= title %>">
-                    <button type="submit" class="wishlist bg-cyan-700 rounded-lg p-2 text-xl transform transition-transform duration-150 ease-in-out active:scale-95">Save to wishlist</button>
+                    <button type="submit" class="wishlist bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 text-xl transform transition-transform duration-150 ease-in-out active:scale-95">Save to wishlist</button>
                 </form>
-                <div class="text-center text-xl">Bidding will be activated on <%= date %> at <%= time %></div>
+                <div class="text-center text-xl">Auction will be activated on <%= date %> at <%= time %></div>
                 <form action="/bid" method="POST">
                     <input type="hidden" name="user_id" value="<%= user_id %>">
                     <input type="hidden" name="bid_id" value="<%= bid_id %>">
                     <input type="hidden" name="auction" value="<%= auction %>">
                     <input type="hidden" name="price" value="<%= price %>">
-                    <button type="submit" id="startBiddingBtn" class="bg-cyan-700 rounded-lg p-2 disabled text-xl transform transition-transform duration-150 ease-in-out active:scale-95" disabled>Start Bidding</button>
+                    <button type="submit" id="startBiddingBtn" class="bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 disabled text-xl transform transition-transform duration-150 ease-in-out active:scale-95" disabled>Start</button>
                 </form>
             </div>
         </div>

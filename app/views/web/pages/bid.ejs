@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bid Room</title>
+    <title>Aukshanz</title>
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
     <style>
@@ -134,7 +134,7 @@
             const response = await fetch(`/bids-and-timer?bid_id=<%= bid_id %>&auction=<%= auction %>&price=<%= price %>`);
             const result = await response.json();
             if (!response.ok) {
-                window.location.href = '/deal';
+                window.location.href = '/welcome';
                 return;
             }
             const { rows, timer } = result;

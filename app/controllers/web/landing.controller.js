@@ -4,13 +4,14 @@ const router = express.Router();
 const multer = require('multer');
 // const mysql = require('mysql2');
 const path = require('path');
-const pool = require('@configs/database');
+// const pool = require('@configs/database');
 const Bid = require('@models/bid.model');
 const Image = require('@models/image.model');
 const Wishlist = require('@models/wishlist.model');
 const User = require('@models/user.model');
 const Contract = require('@models/contract.model');
 const Profile = require('@models/profile.model');
+const Status = require('@models/status.model');
 const { v4: uuidv4 } = require('uuid');
 
 // const asyncHandler = fn => (req, res, next) => {
@@ -50,18 +51,18 @@ router.post('/postbid', authenticate, upload.single('image'), async (req, res) =
     try {
         const bidExists = await Bid.exists(user_id, auction, title, date, time);
         if (bidExists) {
-            return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'A bid with the same details already exists' });
+            return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'An auction with the same details already exists' });
         }
         await Bid.add(bid_id, user_id, name, email, title, auction, date, type, contact, description, price, time);
         if (image) {
             await Image.add(bid_id, image);
-            res.status(200).render('web/layouts/auth', { page: 'success', status: 200, message: 'Bid and image uploaded successfully' });
+            res.status(200).render('web/layouts/auth', { page: 'success', status: 200, message: 'Auction details and image uploaded successfully' });
         } else {
-            res.status(200).render('web/layouts/auth', { page: 'success', status: 200, message: 'Bid uploaded successfully' });
+            res.status(200).render('web/layouts/auth', { page: 'success', status: 200, message: 'Auction details uploaded successfully' });
         }
     } catch (err) {
         console.error('Error inserting bid:', err);
-        res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error inserting bid' });
+        res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error inserting auction' });
     }
 });
 
@@ -88,10 +89,16 @@ router.post('/startbid', authenticate, async (req, res) => {
     }
 });
 
-router.get('/mybid', authenticate, async (req,res)=>{
+router.get('/postedbids', authenticate, async (req,res)=>{
     const user_id = req.cookies.user_id;
     const rows = await Bid.findByUserId(user_id);
-    res.render('web/pages/mybid', {layout: "web/pages/mybid", rows: rows})
+    res.render('web/pages/postedbids', {layout: "web/pages/postedbids", rows: rows})
+})
+
+router.get('/participatedbids', authenticate, async (req,res)=>{
+    const user_id = req.cookies.user_id;
+    const rows = await Contract.findByUserId(user_id);
+    res.render('web/pages/participatedbids', {layout: "web/pages/participatedbids", rows: rows})
 })
 
 router.post('/wishlist', authenticate, async (req,res)=>{
@@ -100,7 +107,7 @@ router.post('/wishlist', authenticate, async (req,res)=>{
         // const [rows] = await pool.query('SELECT * FROM wishlist WHERE wishlist_id = ? AND user_id = ?', [bid_id, user_id]);
         const rows = await Wishlist.read(bid_id, user_id);
         if (rows.length > 0) {
-            res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'Bid already exists in your wishlist' });
+            res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'This auction already exists in your wishlist' });
         } else {
             // await pool.query('INSERT INTO wishlist (wishlist_id, user_id, title) VALUES (?, ?, ?)', [bid_id, user_id, title]);
             await Wishlist.add(bid_id, user_id, title);
@@ -125,7 +132,7 @@ router.post('/wishlist-startbid', authenticate, async (req,res)=>{
         res.render('web/pages/startbid', {layout: "web/pages/startbid", user_id, bid_id, name, type, title, description, auction, price, date, time, imagePath});        
     } catch (err) {
         console.error('Error fetching image path:', err);
-        res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error fetching image path' });
+        res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Error adding to wishlist' });
     }   
 })
 
@@ -215,9 +222,68 @@ router.get('/bids-and-timer', authenticate, async (req, res) => {
     }
 });
 
-router.get('/deal', authenticate, async (req, res) => {
-    res.render('web/pages/deal', {layout: "web/pages/deal"})
+router.post('/posted-bids-status', authenticate, async (req, res) => {
+    const { bid_id } = req.body
+    const bidder = await Contract.getBidder(bid_id);
+    if (!bidder) {
+        return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'This auction has not happened yet' });
+    }
+    const user_id = bidder.user_id;
+    const details = await Profile.findByUserId(user_id);
+    const value = bidder.value;
+    const result = await Status.getResponse(bid_id)
+    let status;
+    if (result){
+        const response = result.response;
+        if (response==='yes'){
+            status = 'Accepted';
+        }
+        else if (response==='no'){
+            status = 'Rejected';
+        }
+    }
+    else{
+        status = ''
+    }
+    res.render('web/pages/postedstatus', {layout: "web/pages/postedstatus", details, value, bid_id, status})
 })
+
+router.post('/participated-bids-status', authenticate, async (req, res) => {
+    const { bid_id } = req.body
+    const result1 = await Bid.getUserId(bid_id)
+    const user_id = result1.user_id
+    const details = await Profile.findByUserId(user_id)
+    const result2 = await Status.getResponse(bid_id)
+    let status;
+    if (result2){
+        const response = result2.response;
+        if (response==='yes'){
+            status = 'Accepted';
+        }
+        else if (response==='no'){
+            status = 'Rejected';
+        }
+    }
+    else{
+        status = 'Pending'
+    }
+    res.render('web/pages/participatedstatus', {layout: "web/pages/participatedstatus", bid_id, details, status})
+})
+
+router.post('/posted-status', authenticate, async (req, res) => {
+    const { bid_id, username, name, contact_no, email, years_of_experience, value } = req.body
+    const response = req.body.response;
+    await Status.add(bid_id, username, name, contact_no, email, years_of_experience, value, response);
+    res.redirect('/welcome');
+});
+
+router.post('/participated-status', authenticate, async (req, res) => {
+    const { bid_id, username, name, contact_no, email, years_of_experience } = req.body
+    console.log(bid_id, username, name, contact_no, email, years_of_experience)
+    const response = req.body.response;
+    await Status.add(bid_id, username, name, contact_no, email, years_of_experience, value, response);
+    res.redirect('/welcome');
+});
 
 router.get('/profile', authenticate, async (req, res) => {
     const user_id = req.cookies.user_id;

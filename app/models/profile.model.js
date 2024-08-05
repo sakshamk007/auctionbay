@@ -13,6 +13,10 @@ const Profile = {
         const [rows] = await pool.execute('SELECT * FROM profile WHERE email = ?', [email]);
         return rows;
     },
+    findByUserId: async (user_id) => {
+        const [rows] = await pool.execute('SELECT * FROM profile WHERE user_id = ?', [user_id]);
+        return rows[0];
+    },
     getUsername: async (user_id) => {
         const [rows] = await pool.execute('SELECT username FROM profile WHERE user_id = ?', [user_id]);
         return rows[0];
