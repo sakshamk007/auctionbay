@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aukshanz</title>
+    <title>AuctionBay</title>
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
     <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
@@ -62,48 +62,48 @@
                         <input type="hidden" name="user_id" value="<%= user_id %>">
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="name">Company Name</label>
-                            <input type="text" name="name" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+                            <input type="text" name="name" class="rounded-md text-black p-2 text-sm w-[400px]" required value="<%= typeof name !== 'undefined' ? name : '' %>">
                         </div>                    
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="email">Email</label>
-                            <input type="email" name="email" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+                            <input type="email" name="email" class="rounded-md text-black p-2 text-sm w-[400px]" required value="<%= typeof email !== 'undefined' ? email : '' %>">
                         </div>                   
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="title">Job Title</label>
-                            <input type="text" id="title" name="title" class="rounded-md text-black p-2 text-sm w-[400px]" required onclick="openModal('titleModal')" readonly>
+                            <input type="text" id="title" name="title" class="rounded-md text-black p-2 text-sm w-[400px]" required onclick="openModal('titleModal')" readonly value="<%= typeof title !== 'undefined' ? title : '' %>">
                         </div> 
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="auction">Type of Auction</label>
                             <select name="auction" class="rounded-md text-black p-2 text-sm w-[400px]" required>
-                                <option value="forward">Forward Auction</option>
-                                <option value="reverse">Reverse Auction</option>
+                                <option value="forward" <%= typeof auction !== 'undefined' && auction === 'forward' ? 'selected' : '' %>>Forward Auction</option>
+                                <option value="reverse" <%= typeof auction !== 'undefined' && auction === 'reverse' ? 'selected' : '' %>>Reverse Auction</option>
                             </select>                          
                         </div> 
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="date">Auction Date</label>
-                            <input type="date" name="date" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+                            <input type="date" name="date" class="rounded-md text-black p-2 text-sm w-[400px]" required value="<%= typeof date !== 'undefined' ? date : '' %>">
                         </div>                                
                     </div>
                     <div class="flex flex-col gap-10">
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="type">Company Type</label>
-                            <input type="text" name="type" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+                            <input type="text" name="type" class="rounded-md text-black p-2 text-sm w-[400px]" required value="<%= typeof type !== 'undefined' ? type : '' %>">
                         </div>
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="contact">Contact Number</label>
-                            <input type="number" id="contact" name="contact" class="rounded-md text-black p-2 text-sm w-[400px]" pattern="\d{10}" maxlength="10" required>
+                            <input type="number" id="contact" name="contact" class="rounded-md text-black p-2 text-sm w-[400px]" pattern="\d{10}" maxlength="10" required value="<%= typeof contact !== 'undefined' ? contact : '' %>">
                         </div>
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="description">Job Description</label>
-                            <input type="text" id="description" name="description" class="rounded-md text-black p-2 text-sm w-[400px]" required onclick="openModal('descriptionModal')" readonly>
+                            <input type="text" id="description" name="description" class="rounded-md text-black p-2 text-sm w-[400px]" required onclick="openModal('descriptionModal')" readonly value="<%= typeof description !== 'undefined' ? description : '' %>">
                         </div>                  
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="price">Base Price</label>
-                            <input type="number" name="price" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+                            <input type="number" name="price" class="rounded-md text-black p-2 text-sm w-[400px]" required value="<%= typeof price !== 'undefined' ? price : '' %>">
                         </div>
                         <div class="flex justify-between items-center gap-4 ">
                             <label for="time">Auction Time</label>
-                            <input type="time" name="time" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+                            <input type="time" name="time" class="rounded-md text-black p-2 text-sm w-[400px]" required value="<%= typeof time !== 'undefined' ? time : '' %>">
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
             <span class="close absolute top-1 right-14" onclick="closeModal('titleModal')">&times;</span>
             <span class="edit absolute top-3 right-6" onclick="editModal('titleModal', 'title')">&#x2713;</span>
             <label for="title" class="text-xl">Job Title</label>
-            <textarea id="titleTextarea" class="rounded-md text-black p-2 text-sm w-full h-full" required></textarea>
+            <textarea id="titleTextarea" class="rounded-md text-black p-2 text-sm w-full h-full" required><%= typeof title !== 'undefined' ? title : '' %></textarea>
         </div>
     </div>
     <div id="descriptionModal" class="modal">
@@ -129,7 +129,7 @@
             <span class="close absolute top-1 right-14" onclick="closeModal('descriptionModal')">&times;</span>
             <span class="edit absolute top-3 right-6" onclick="editModal('descriptionModal', 'description')">&#10003;</span>
             <label for="description" class="text-xl">Job Description</label>
-            <textarea id="descriptionTextarea" class="rounded-md text-black p-2 text-sm w-full h-full" required></textarea>
+            <textarea id="descriptionTextarea" class="rounded-md text-black p-2 text-sm w-full h-full" required><%= typeof description !== 'undefined' ? description : '' %></textarea>
         </div>
     </div>
 

@@ -136,6 +136,13 @@ router.post('/wishlist-startbid', authenticate, async (req,res)=>{
     }   
 })
 
+router.post('/delete-wishlist', authenticate, async (req,res)=>{
+    const { wishlist_id } = req.body;
+    const user_id = req.cookies.user_id;
+    await Wishlist.delete(wishlist_id, user_id);
+    res.redirect('/welcome');
+})
+
 router.post('/bid', authenticate, async (req,res)=>{
     const { auction, bid_id, user_id, price } = req.body;
     const username = await Profile.getUsername(user_id);
@@ -279,7 +286,6 @@ router.post('/posted-status', authenticate, async (req, res) => {
 
 router.post('/participated-status', authenticate, async (req, res) => {
     const { bid_id, username, name, contact_no, email, years_of_experience } = req.body
-    console.log(bid_id, username, name, contact_no, email, years_of_experience)
     const response = req.body.response;
     await Status.add(bid_id, username, name, contact_no, email, years_of_experience, value, response);
     res.redirect('/welcome');
@@ -287,8 +293,9 @@ router.post('/participated-status', authenticate, async (req, res) => {
 
 router.get('/profile', authenticate, async (req, res) => {
     const user_id = req.cookies.user_id;
-    const email = await User.getEmailId(user_id);
-    const rows = await Profile.findByEmail(email.email)
+    const result = await User.getEmailId(user_id);
+    const email = result.email
+    const rows = await Profile.findByEmail(email)
     if (rows.length === 0) {
         res.render('web/layouts/auth', { page: 'profile', user_id, email });
     }
@@ -307,14 +314,37 @@ router.post('/profile', authenticate, async (req, res) => {
     else {
         // await pool.query('INSERT INTO profile (user_id, email, contact_no, username, first_name, last_name, years_of_experience) VALUES (?, ?, ?, ?, ?, ?, ?)', [user_id, email, contact, username, first, last, experience]);
         await Profile.add(user_id, email, contact, username, first, last, experience)
-        return res.status(200).render('web/layouts/auth', { page: 'success', status: 200, message: 'Profile updated successfully' });
+        const rows = await Profile.findByEmail(email)
+        return res.render('web/pages/profile', {layout: "web/pages/profile", rows})
     }
 })
 
-router.get('/signout', (req, res) => {
+router.get('/signout', authenticate, (req, res) => {
     res.clearCookie('session_id');
     res.clearCookie('user_id');
     res.redirect('/');
 });
+
+router.post('/edit-profile', authenticate, async (req, res) => {
+    const {user_id, email, contact, username, first, last, experience} = req.body;
+    await Profile.delete(user_id);
+    res.render('web/layouts/auth', { page: 'profile', user_id, email, contact, username, first, last, experience});
+})
+
+router.post('/edit-posted-bids', authenticate, async (req, res) => {
+    const {bid_id, name, email, title, auction, type, contact, description, price} = req.body;
+    const user_id = req.cookies.user_id;
+    await Wishlist.delete(bid_id, user_id);
+    await Bid.delete(bid_id, user_id);
+    res.render('web/pages/postbid', {layout: "web/pages/postbid", user_id, name, email, title, auction, type, contact, description, price})
+})
+
+router.post('/delete-posted-bids', authenticate, async (req, res) => {
+    const {bid_id} = req.body;
+    const user_id = req.cookies.user_id;
+    await Wishlist.delete(bid_id, user_id);
+    await Bid.delete(bid_id, user_id);
+    res.redirect('/postedbids');
+})
 
 module.exports = router;

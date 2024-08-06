@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aukshanz</title>
+    <title>AuctionBay</title>
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
 </head>
@@ -40,10 +40,22 @@
                 </div>
             </div>            
         </div>
-        <form action="/signout" method="GET">
-            <button type="submit" class="bg-gradient-to-b from-lime-700 to-lime-900 text-xl px-4 py-2 rounded-full transform transition-transform duration-150 ease-in-out active:scale-95 mt-10">Sign Out</button>
-        </form>
+        <div class="flex items-center justify-center gap-4">
+            <form action="/edit-profile" method="POST">
+                <input type="hidden" name="user_id" value="<%= rows[0].user_id %>">                
+                <input type="hidden" name="username" value="<%= rows[0].username %>">                
+                <input type="hidden" name="first" value="<%= rows[0].first_name %>">
+                <input type="hidden" name="last" value="<%= rows[0].last_name %>">
+                <input type="hidden" name="contact" value="<%= rows[0].contact_no %>">
+                <input type="hidden" name="email" value="<%= rows[0].email %>">
+                <input type="hidden" name="experience" value="<%= rows[0].years_of_experience %>">
+                <button type="submit" class="bg-gradient-to-b from-cyan-700 to-cyan-900 text-xl px-4 py-2 rounded-full transform transition-transform duration-150 ease-in-out active:scale-95 mt-10 w-[110px]">Edit</button>
+            </form>
+            <form action="/signout" method="GET">
+                <button type="submit" class="bg-gradient-to-b from-lime-700 to-lime-900 text-xl px-4 py-2 rounded-full transform transition-transform duration-150 ease-in-out active:scale-95 mt-10 w-[110px]">Sign Out</button>
+            </form>
+        </div>
     </div>
-    
+      
 </body>
 </html>

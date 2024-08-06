@@ -1,15 +1,28 @@
-<form action="/profile" method="post" class="flex items-center flex-col gap-6">
+<form action="/profile" method="post" class="flex items-center flex-col gap-6" onsubmit="return validateContactNumber()">
     <div class="text-4xl">Profile</div>
     <input type="hidden" name="user_id" value="<%= user_id %>">
-    <input type="email" name="email" class="rounded-md text-black p-2 text-sm w-[400px]" placeholder="<%= email.email %>" value="<%= email.email %>" readonly>
-    <input type="text" name="username" placeholder="username" class="rounded-md text-black p-2 text-sm w-[400px]" required>
+    <input type="email" name="email" class="rounded-md text-black p-2 text-sm w-[400px]" placeholder="<%= typeof email !== 'undefined' ? email : 'email' %>" value="<%= typeof email !== 'undefined' ? email : '' %>" readonly>
+    <input type="text" name="username" placeholder="username" class="rounded-md text-black p-2 text-sm w-[400px]" value="<%= typeof username !== 'undefined' ? username : '' %>" required>    
     <div class="flex gap-5">
-        <input type="text" name="first" placeholder="first name" class="rounded-md text-black p-2 text-sm w-[190px]" required>
-        <input type="text" name="last" placeholder="last name" class="rounded-md text-black p-2 text-sm w-[190px]" required>
-    </div>
+        <input type="text" name="first" placeholder="first name" class="rounded-md text-black p-2 text-sm w-[190px]" value="<%= typeof first !== 'undefined' ? first : '' %>" required>
+        <input type="text" name="last" placeholder="last name" class="rounded-md text-black p-2 text-sm w-[190px]" value="<%= typeof last !== 'undefined' ? last : '' %>" required>
+    </div>    
     <div class="flex gap-5">
-        <input type="text" name="contact" placeholder="contact number" class="rounded-md text-black p-2 text-sm w-[190px]" required>
-        <input type="text" name="experience" placeholder="years of experience" class="rounded-md text-black p-2 text-sm w-[190px]" required>
-    </div>
+        <input type="text" name="contact" placeholder="contact number" id="contact" class="rounded-md text-black p-2 text-sm w-[190px]" value="<%= typeof contact !== 'undefined' ? contact : '' %>" required>
+        <input type="text" name="experience" placeholder="years of experience" class="rounded-md text-black p-2 text-sm w-[190px]" value="<%= typeof experience !== 'undefined' ? experience : '' %>" required>
+    </div>    
     <button type="submit" class="w-[400px] bg-violet-800 p-2 rounded-lg h-12 text-xl transform transition-transform duration-150 ease-in-out active:scale-95">Save</button>
 </form>
+
+<script>
+    function validateContactNumber() {
+        const contactInput = document.getElementById('contact');
+        const contactValue = contactInput.value;
+        const isValid = /^\d{10}$/.test(contactValue);    
+        if (!isValid) {
+            alert('Please enter a valid 10-digit contact number.');
+            return false;
+        }
+        return true;
+    }
+</script>

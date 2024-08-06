@@ -33,10 +33,10 @@ const Bid = {
         const [rows] = await pool.execute('SELECT user_id FROM bids WHERE bid_id = ?', [userId]);
         return rows[0];
     },
-    // delete: async (id) => {
-    //     const [result] = await pool.execute('DELETE FROM bids WHERE id = ?', [id]);
-    //     return result;
-    // }
+    delete: async (bid_id, user_id) => {
+        const [result] = await pool.execute('DELETE FROM bids WHERE bid_id = ? AND user_id = ?', [bid_id, user_id]);
+        return result;
+    }
 };
 
 module.exports = Bid;

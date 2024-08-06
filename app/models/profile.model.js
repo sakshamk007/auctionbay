@@ -20,7 +20,11 @@ const Profile = {
     getUsername: async (user_id) => {
         const [rows] = await pool.execute('SELECT username FROM profile WHERE user_id = ?', [user_id]);
         return rows[0];
-    }
+    },
+    delete: async (user_id) => {
+        const [result] = await pool.execute('DELETE FROM profile WHERE user_id = ?', [user_id]);
+        return result;
+    },
 }
 
 module.exports = Profile;

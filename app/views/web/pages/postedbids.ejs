@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aukshanz</title>
+    <title>AuctionBay</title>
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
     <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
@@ -30,13 +30,14 @@
         <table class="my-14 w-[90%] text-white overflow-y-auto text-xl">
             <thead class="bg-violet-900">
                 <tr>
-                    <th class="w-[150px]">By</th>
-                    <th class="w-[250px]">Title</th>
-                    <th class="w-[400px]">Description</th>
-                    <th class="w-[120px]">Base Price</th>
-                    <th class="w-[180px]">Date</th>
-                    <th class="w-[80px]">Time</th>
-                    <th class="w-[150px]"></th>
+                    <th class="w-[150px] text-center">By</th>
+                    <th class="w-[250px] text-center">Title</th>
+                    <th class="w-[400px] text-center">Description</th>
+                    <th class="w-[120px] text-center">Base Price</th>
+                    <th class="w-[180px] text-center">Date</th>
+                    <th class="w-[80px] text-center">Time</th>
+                    <th class="w-[80px] text-center">Status</th>
+                    <th class="w-[100px] text-center"></th>
                 </tr>
             </thead>
             <tbody class="bg-gray-800">
@@ -51,7 +52,26 @@
                         <td>
                             <form action="/posted-bids-status" method="POST">
                                 <input type="hidden" name="bid_id" value="<%= row.bid_id %>">
-                                <button type="submit" class="interested bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 transform transition-transform duration-150 ease-in-out active:scale-95">Check Status</button>
+                                <button type="submit" class="bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 transform transition-transform duration-150 ease-in-out active:scale-95">Check</button>
+                            </form>
+                        </td>
+                        <td class="flex gap-2">
+                            <form action="/edit-posted-bids" method="POST">
+                                <input type="hidden" name="bid_id" value="<%= row.bid_id %>">
+                                <input type="hidden" name="user_id" value="<%= row.user_id %>">
+                                <input type="hidden" name="name" value="<%= row.name %>">
+                                <input type="hidden" name="email" value="<%= row.email %>">
+                                <input type="hidden" name="title" value="<%= row.title %>">
+                                <input type="hidden" name="auction" value="<%= row.auction %>">
+                                <input type="hidden" name="type" value="<%= row.type %>">
+                                <input type="hidden" name="contact" value="<%= row.contact %>">
+                                <input type="hidden" name="description" value="<%= row.description %>">
+                                <input type="hidden" name="price" value="<%= row.price %>">
+                                <button type="submit" class="bg-gradient-to-b from-lime-700 to-lime-900 rounded-lg p-2 transform transition-transform duration-150 ease-in-out active:scale-95"><img src="/img/edit.svg" alt=""></button>
+                            </form>
+                            <form action="/delete-posted-bids" method="POST">
+                                <input type="hidden" name="bid_id" value="<%= row.bid_id %>">
+                                <button type="submit" class="bg-gradient-to-b from-red-700 to-red-900 rounded-lg p-2 transform transition-transform duration-150 ease-in-out active:scale-95"><img src="/img/delete.svg" alt=""></button>
                             </form>
                         </td>
                     </tr>
