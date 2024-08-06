@@ -21,8 +21,6 @@ app.set('views', path.join(__dirname, 'app', 'views'));
 app.use(expressLayouts);
 app.set('layout', 'web/layouts/auth', 'web/layouts/landing', 'web/pages/postbid', 'web/pages/checkbid', 'web/pages/startbid', 'web/pages/postedbids', 'web/pages/participatedbids', 'web/pages/bid', 'web/pages/postedstatus', 'web/pages/participatedstatus', 'web/pages/profile');
 
-// require('@routes/admin.routes')(app);
-// require('@routes/api.routes')(app);
 require('@routes/web.routes')(app);
 
 app.use((err, req, res, next) => {
