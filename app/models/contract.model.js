@@ -9,8 +9,8 @@ const Contract = {
         const [rows] = await pool.execute('SELECT * FROM contracts WHERE bid_id = ? ORDER BY value ASC LIMIT 10', [id]);
         return rows;
     },
-    add: async (user_id, bid_id, bidValue, email, auction) => {
-        const [result] = await pool.execute('INSERT INTO contracts (user_id, bid_id, value, email, auction, created_at) VALUES (?, ?, ?, ?, ?, NOW())', [user_id, bid_id, bidValue, email, auction]);
+    add: async (user_id, bid_id, bidValue, email, auction, username) => {
+        const [result] = await pool.execute('INSERT INTO contracts (user_id, bid_id, value, email, auction, username, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())', [user_id, bid_id, bidValue, email, auction, username]);
         return result;
     },
     getMaxBid: async (id) => {

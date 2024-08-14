@@ -9,8 +9,8 @@ const Bid = {
         const [result] = await pool.execute('INSERT INTO bids (bid_id, user_id, name, email, title, auction, date, type, contact, description, price, time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [bid_id, user_id, name, email, title, auction, date, type, contact, description, price, time]);
         return result;
     },
-    exists: async (user_id, auction, title, date, time) => {
-        const [rows] = await pool.execute('SELECT * FROM bids WHERE user_id = ? AND auction = ? AND title = ? AND date = ? AND time = ?', [user_id, auction, title, date, time]);
+    exists: async (user_id, title, name, description, auction) => {
+        const [rows] = await pool.execute('SELECT * FROM bids WHERE user_id = ? AND title = ? AND name = ? AND description = ? AND auction = ?', [user_id, title, name, description, auction]);
         return rows.length > 0;
     },
     findByUserId: async (userId) => {
@@ -32,6 +32,10 @@ const Bid = {
     getUserId: async (userId) => {
         const [rows] = await pool.execute('SELECT user_id FROM bids WHERE bid_id = ?', [userId]);
         return rows[0];
+    },
+    getAll: async () => {
+        const [rows] = await pool.execute('SELECT * FROM bids');
+        return rows;
     },
     delete: async (bid_id, user_id) => {
         const [result] = await pool.execute('DELETE FROM bids WHERE bid_id = ? AND user_id = ?', [bid_id, user_id]);

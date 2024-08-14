@@ -18,7 +18,6 @@ const authenticate = async (req, res, next) => {
         next();
     } catch (error) {
         console.error(error);
-        res.status(500).send('');
         return res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Internal Server Error' });
     }
 };
@@ -36,6 +35,6 @@ const terminateInactiveSessions = async () => {
         console.error('Error terminating inactive sessions:', error);
     }
 };
-setInterval(terminateInactiveSessions, 30 * 60 * 1000);
+setInterval(terminateInactiveSessions, 60 * 1000);
 
 module.exports = authenticate;

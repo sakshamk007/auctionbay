@@ -13,6 +13,7 @@ const Contract = require('@models/contract.model');
 const Profile = require('@models/profile.model');
 const Status = require('@models/status.model');
 const { v4: uuidv4 } = require('uuid');
+const { set } = require('lodash');
 
 // const asyncHandler = fn => (req, res, next) => {
 //   Promise.resolve(fn(req, res, next)).catch(next);
@@ -49,7 +50,7 @@ router.post('/postbid', authenticate, upload.single('image'), async (req, res) =
     const image = req.file ? req.file.filename : null;
     const bid_id = uuidv4();
     try {
-        const bidExists = await Bid.exists(user_id, auction, title, date, time);
+        const bidExists = await Bid.exists(user_id, title, name, description, auction);
         if (bidExists) {
             return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'An auction with the same details already exists' });
         }
@@ -145,7 +146,7 @@ router.post('/delete-wishlist', authenticate, async (req,res)=>{
 
 router.post('/bid', authenticate, async (req,res)=>{
     const { auction, bid_id, user_id, price } = req.body;
-    const username = await Profile.getUsername(user_id);
+    // const username = await Profile.getUsername(user_id);
     if (auction === 'forward'){
         const rows = await Contract.browseDesc(bid_id);
         const maxBid = await Contract.getMaxBid(bid_id);
@@ -153,7 +154,7 @@ router.post('/bid', authenticate, async (req,res)=>{
         if (currentBid === null){
             currentBid = price;
         }
-        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price, username})
+        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price})
     }
     else if (auction === 'reverse'){
         const rows = await Contract.browseAsc(bid_id);
@@ -170,6 +171,7 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
     const { user_id, bidValue, auction, bid_id } = req.body;
     const value = Number(bidValue);
     const email = await User.getEmailId(user_id);
+    const username = await Profile.getUsername(user_id);
     if (auction === 'forward'){
         const maxBid = await Contract.getMaxBid(bid_id);
         let currentBid = maxBid.max_value
@@ -177,7 +179,7 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
             return res.status(400).json({ error: 'Bid Value should be greater than Current Bid' });
         }
         else {
-            await Contract.add(user_id, bid_id, value, email.email, auction);
+            await Contract.add(user_id, bid_id, value, email.email, auction, username.username);
             return res.status(200).json({ message: 'Bid submitted successfully' });
         }
     }
@@ -191,11 +193,27 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
             return res.status(400).json({ error: 'Bid Value should not be less than or equal to 0' });
         }
         else {
-            await Contract.add(user_id, bid_id, value, email.email, auction);
+            await Contract.add(user_id, bid_id, value, email.email, auction, username.username);
             return res.status(200).json({ message: 'Bid submitted successfully' });
         }
     }
 })
+
+const updateTimer = async () => {
+    const bids = await Bid.getAll();
+    bids.forEach(async (bid) => {
+        const bid_id = bid.bid_id;
+        let timer = bid.timer;
+        const time = bid.time;
+        const now = new Date().toLocaleTimeString('en-IN', { hour12: false }).split(' ')[0]
+        if (timer > 0 && time <= now){
+            timer--; 
+            // await pool.query('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id])
+            await Bid.updateTimer(timer, bid_id)
+        }
+    });
+}
+setInterval(updateTimer, 1000);
 
 router.get('/bids-and-timer', authenticate, async (req, res) => {
     const { bid_id, auction, price } = req.query;
@@ -203,9 +221,6 @@ router.get('/bids-and-timer', authenticate, async (req, res) => {
     let rows = await Bid.getTimer(bid_id)
     let timer = rows[0].timer
     if (timer > 0) {
-        timer--;
-        // await pool.query('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id])
-        await Bid.updateTimer(timer, bid_id)
         if (auction === 'forward') {
             const rows = await Contract.browseDesc(bid_id);
             const maxBid = await Contract.getMaxBid(bid_id);
@@ -314,8 +329,7 @@ router.post('/profile', authenticate, async (req, res) => {
     else {
         // await pool.query('INSERT INTO profile (user_id, email, contact_no, username, first_name, last_name, years_of_experience) VALUES (?, ?, ?, ?, ?, ?, ?)', [user_id, email, contact, username, first, last, experience]);
         await Profile.add(user_id, email, contact, username, first, last, experience)
-        const rows = await Profile.findByEmail(email)
-        return res.render('web/pages/profile', {layout: "web/pages/profile", rows})
+        return res.redirect('/welcome');
     }
 })
 

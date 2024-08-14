@@ -13,7 +13,6 @@
         }
         th, td {
             border: 1px solid #000000;
-            padding: 8px;
         }
         th {
             text-align: left;
@@ -22,42 +21,48 @@
 </head>
 <body class="text-white font-body_font flex">
     <div class="absolute top-0 z-[-2] min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
-        <div class="text-5xl text-yellow-400 p-14 text-center">&lt; Participated &gt;</div>
-        <div class="flex justify-center items-center gap-10">
-            <button class="forward w-[300px] text-center text-3xl py-4 rounded-full bg-gradient-to-b from-sky-700 to-sky-900 transform transition-transform duration-150 ease-in-out active:scale-95">Forward Auction</button>
-            <button class="reverse opacity-50 w-[300px] text-center text-3xl py-4 rounded-full bg-gradient-to-b from-lime-700 to-lime-900 transform transition-transform duration-150 ease-in-out active:scale-95">Reverse Auction</button>
+        <div class="lg:text-5xl text-3xl text-yellow-400 lg:p-14 p-7 text-center">&lt; Participated &gt;</div>
+        <div class="flex justify-center items-center lg:gap-10 gap-2">
+            <button class="forward lg:w-[300px] w-[160px] text-center lg:text-3xl text-base lg:py-4 py-2 rounded-full bg-gradient-to-b from-sky-700 to-sky-900 transform transition-transform duration-150 ease-in-out active:scale-95">Forward Auction</button>
+            <button class="reverse opacity-50 lg:w-[300px] w-[160px] text-center lg:text-3xl text-base lg:py-4 py-2 rounded-full bg-gradient-to-b from-lime-700 to-lime-900 transform transition-transform duration-150 ease-in-out active:scale-95">Reverse Auction</button>
         </div>
-        <table class="my-14 w-[90%] text-white overflow-y-auto text-xl">
-            <thead class="bg-violet-900">
-                <tr>
-                    <th class="w-[150px]">By</th>
-                    <th class="w-[250px]">Title</th>
-                    <th class="w-[400px]">Description</th>
-                    <th class="w-[120px]">Base Price</th>
-                    <th class="w-[180px]">Date</th>
-                    <th class="w-[80px]">Time</th>
-                    <th class="w-[150px]"></th>
-                </tr>
-            </thead>
-            <tbody class="bg-gray-800">
-                <% rows.forEach(row => { %>
-                    <tr class="<%= row.auction %>">
-                        <td><%= row.name %></td>
-                        <td><%= row.title %></td>
-                        <td><%= row.description %></td>
-                        <td><%= row.price %></td>
-                        <td><%= row.date.toString().split('00:00:00')[0] %></td>
-                        <td><%= row.time %></td>
-                        <td>
-                            <form action="/participated-bids-status" method="POST">
-                                <input type="hidden" name="bid_id" value="<%= row.bid_id %>">
-                                <button type="submit" class="interested bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg p-2 transform transition-transform duration-150 ease-in-out active:scale-95">Check Status</button>
-                            </form>
-                        </td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>            
+        <div class="lg:my-14 my-7 w-full flex justify-center items-center text-white lg:text-xl text-xs lg:overflow-hidden overflow-y-auto overflow-x-auto lg:px-14 px-7">
+            <div class="w-full lg:overflow-hidden overflow-x-scroll">
+                <table class="lg:w-full w-[200%]">
+                    <thead class="bg-violet-900">
+                        <tr>
+                            <th class="lg:w-[15%] w-[25%] text-center lg:p-2 p-1">By</th>
+                            <th class="lg:w-[20%] w-[40%] text-center lg:p-2 p-1">Title</th>
+                            <th class="lg:w-[30%] w-[60%] text-center lg:p-2 p-1">Description</th>
+                            <th class="lg:w-[10%] w-[20%] text-center lg:p-2 p-1">Base Price</th>
+                            <th class="lg:w-[14%] w-[24%] text-center lg:p-2 p-1">Date</th>
+                            <th class="lg:w-[6%] w-[16%] text-center lg:p-2 p-1">Time</th>
+                            <th class="lg:w-[5%] w-[15%] text-center lg:p-2 p-1">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-gray-800">
+                        <% rows.forEach(row => { %>
+                            <tr class="<%= row.auction %>">
+                                <td class="lg:p-2 p-1"><%= row.name %></td>
+                                <td class="lg:p-2 p-1"><%= row.title %></td>
+                                <td class="lg:p-2 p-1"><%= row.description %></td>
+                                <td class="lg:p-2 p-1 text-center"><%= row.price %></td>
+                                <td class="lg:p-2 p-1 text-center"><%= row.date.toString().split('00:00:00')[0] %></td>
+                                <td class="lg:p-2 p-1 text-center"><%= row.time %></td>
+                                <td class="lg:p-2 p-1 text-center">
+                                    <div class="flex flex-col justify-center items-center gap-2">
+                                        <form action="/participated-bids-status" method="POST">
+                                            <input type="hidden" name="bid_id" value="<%= row.bid_id %>">
+                                            <button type="submit" class="interested bg-gradient-to-b from-cyan-700 to-cyan-900 rounded-lg lg:p-2 p-1 transform transition-transform duration-150 ease-in-out active:scale-95">Check</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table> 
+            </div>
+        </div>           
     </div>    
 
     <script>

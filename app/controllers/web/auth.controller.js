@@ -3,6 +3,7 @@ const router = express.Router();
 // const pool = require('@configs/database');
 const User = require('@models/user.model');
 const Session = require('@models/session.model');
+const Profile = require('@models/profile.model');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
@@ -55,8 +56,15 @@ router.post('/signin', async (req, res) => {
         // await pool.query('INSERT INTO sessions (session_id, user_id, user_agent, expiry, last_activity) VALUES (?, ?, ?, ?, NOW())', [session_id, user.user_id, user_agent, expiry]);
         await Session.add(session_id, user.user_id, user_agent, expiry);
         res.cookie('session_id', session_id, { httpOnly: true, maxAge: 30 * 60 * 1000 });
-        res.cookie('user_id', user.user_id);
-        res.redirect('/welcome');
+        res.cookie('user_id', user.user_id);        
+        const rows1 = await Profile.findByEmail(email)
+        if (rows1.length === 0) {
+            const user_id = user.user_id
+            res.render('web/layouts/auth', { page: 'profile', user_id, email });
+        }
+        else{
+            res.redirect('/welcome');
+        }
     } catch (error) {
         console.error(error);
         res.status(500).render('web/layouts/auth', { page: 'error', status: 500, message: 'Internal server error' });

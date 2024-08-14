@@ -7,36 +7,38 @@
     <link href="/src/input.css" type="text/css" rel="stylesheet">
     <link href="/src/output.css" type="text/css" rel="stylesheet">
 </head>
-<body class="text-white font-body_font flex">
-    <div class="min-h-screen h-auto w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
-        <div class="text-5xl text-yellow-400 p-14 text-center">&lt; Profile &gt;</div>
-        <div class="flex gap-6">
-            <div class="flex flex-col gap-6">
-                <div class="flex justify-between items-center gap-6 text-xl">
+<body class="text-white font-body_font flex ">
+    <div class="absolute top-0 z-[-2] h-auto w-auto min-h-full min-w-full flex flex-col items-center bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px]">
+        <div class="lg:text-5xl text-3xl text-yellow-400 lg:p-14 p-7 text-center">&lt; Profile &gt;</div>
+        <div class="flex flex-col lg:gap-8 gap-4">
+            <div class="flex lg:gap-6 gap-4 justify-between lg:flex-row flex-col">
+                <div class="flex lg:flex-row flex-col justify-between items-center lg:gap-6 gap-1 lg:text-xl text-base lg:w-[620px] w-[300px]">
                     <label for="username">Username</label>
-                    <div class="bg-white text-black w-[400px] p-2 rounded-md"><%= rows[0].username %></div>
+                    <div class="bg-white text-black lg:w-[400px] w-[300px] p-2 rounded-md lg:text-left text-center"><%= rows[0].username %></div>
                 </div>
-                <div class="flex justify-between items-center gap-6 text-xl">
-                    <label for="first">First Name</label>
-                    <div class="bg-white text-black w-[400px] p-2 rounded-md"><%= rows[0].first_name %></div>
-                </div>
-                <div class="flex justify-between items-center gap-6 text-xl">
-                    <label for="contact">Contact Number</label>
-                    <div class="bg-white text-black w-[400px] p-2 rounded-md"><%= rows[0].contact_no %></div>
+                <div class="flex lg:flex-row flex-col justify-between items-center lg:gap-6 gap-1 lg:text-xl text-base lg:w-[620px] w-[300px]">
+                    <label for="email">Email</label>
+                    <div class="bg-white text-black lg:w-[400px] w-[300px] p-2 rounded-md lg:text-left text-center"><%= rows[0].email %></div>
                 </div>
             </div>
-            <div class="flex flex-col gap-6">
-                <div class="flex justify-between items-center gap-6 text-xl">
-                    <label for="email">Email</label>
-                    <div class="bg-white text-black w-[400px] p-2 rounded-md"><%= rows[0].email %></div>
+            <div class="flex lg:gap-6 gap-4 justify-between lg:flex-row flex-col">
+                <div class="flex lg:flex-row flex-col justify-between items-center lg:gap-6 gap-1 lg:text-xl text-base lg:w-[620px] w-[300px]
+                    <label for="first">First Name</label>
+                    <div class="bg-white text-black lg:w-[400px] w-[300px] p-2 rounded-md lg:text-left text-center"><%= rows[0].first_name %></div>
                 </div>
-                <div class="flex justify-between items-center gap-6 text-xl">
+                <div class="flex lg:flex-row flex-col justify-between items-center lg:gap-6 gap-1 lg:text-xl text-base lg:w-[620px] w-[300px]
                     <label for="last">Last Name</label>
-                    <div class="bg-white text-black w-[400px] p-2 rounded-md"><%= rows[0].last_name %></div>
+                    <div class="bg-white text-black lg:w-[400px] w-[300px] p-2 rounded-md lg:text-left text-center"><%= rows[0].last_name %></div>
+                </div>                
+            </div>
+            <div class="flex lg:gap-6 gap-4 justify-between lg:flex-row flex-col">                
+                <div class="flex lg:flex-row flex-col justify-between items-center lg:gap-6 gap-1 lg:text-xl text-base lg:w-[620px] w-[300px]
+                    <label for="contact">Contact Number</label>
+                    <div class="bg-white text-black lg:w-[400px] w-[300px] p-2 rounded-md lg:text-left text-center"><%= rows[0].contact_no %></div>
                 </div>
-                <div class="flex justify-between items-center gap-6 text-xl">
+                <div class="flex lg:flex-row flex-col justify-between items-center lg:gap-6 gap-1 lg:text-xl text-base lg:w-[620px] w-[300px]">
                     <label for="experience">Years Of Experience</label>
-                    <div class="bg-white text-black w-[400px] p-2 rounded-md"><%= rows[0].years_of_experience %></div>
+                    <div class="bg-white text-black lg:w-[400px] w-[300px] p-2 rounded-md lg:text-left text-center"><%= rows[0].years_of_experience %></div>
                 </div>
             </div>            
         </div>
@@ -49,10 +51,10 @@
                 <input type="hidden" name="contact" value="<%= rows[0].contact_no %>">
                 <input type="hidden" name="email" value="<%= rows[0].email %>">
                 <input type="hidden" name="experience" value="<%= rows[0].years_of_experience %>">
-                <button type="submit" class="bg-gradient-to-b from-cyan-700 to-cyan-900 text-xl px-4 py-2 rounded-full transform transition-transform duration-150 ease-in-out active:scale-95 mt-10 w-[110px]">Edit</button>
+                <button type="submit" class="bg-gradient-to-b from-cyan-700 to-cyan-900 lg:text-xl text-lg lg:px-4 lg:py-2 px-2 py-1 rounded-full transform transition-transform duration-150 ease-in-out active:scale-95 lg:mt-10 mt-8 lg:w-[110px] w-[90px]">Edit</button>
             </form>
             <form action="/signout" method="GET">
-                <button type="submit" class="bg-gradient-to-b from-lime-700 to-lime-900 text-xl px-4 py-2 rounded-full transform transition-transform duration-150 ease-in-out active:scale-95 mt-10 w-[110px]">Sign Out</button>
+                <button type="submit" class="bg-gradient-to-b from-lime-700 to-lime-900 lg:text-xl text-lg lg:px-4 lg:py-2 px-2 py-1 rounded-full transform transition-transform duration-150 ease-in-out active:scale-95 lg:mt-10 mt-8 lg:w-[110px] w-[90px]">Sign Out</button>
             </form>
         </div>
     </div>
