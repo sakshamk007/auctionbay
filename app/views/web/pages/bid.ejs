@@ -106,12 +106,13 @@
             const user_id = '<%= user_id %>';
             const bid_id = '<%= bid_id %>';
             const auction = '<%= auction %>';
+            const price = '<%= price %>';
             const response = await fetch('/submit-bid', {
                 method: 'POST',
                 headers: {
             'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ user_id, bidValue, auction, bid_id })
+            body: JSON.stringify({ user_id, bidValue, auction, bid_id, price })
             })
             const bidValueInput = document.getElementById('bidValue');
             bidValueInput.value = '';

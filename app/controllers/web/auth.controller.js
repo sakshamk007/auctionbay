@@ -55,7 +55,7 @@ router.post('/signin', async (req, res) => {
         const expiry = new Date(Date.now() + 30 * 60 * 1000);
         // await pool.query('INSERT INTO sessions (session_id, user_id, user_agent, expiry, last_activity) VALUES (?, ?, ?, ?, NOW())', [session_id, user.user_id, user_agent, expiry]);
         await Session.add(session_id, user.user_id, user_agent, expiry);
-        res.cookie('session_id', session_id, { httpOnly: true, maxAge: 30 * 60 * 1000 });
+        res.cookie('session_id', session_id, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         res.cookie('user_id', user.user_id);        
         const rows1 = await Profile.findByEmail(email)
         if (rows1.length === 0) {

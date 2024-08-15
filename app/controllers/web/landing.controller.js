@@ -146,7 +146,6 @@ router.post('/delete-wishlist', authenticate, async (req,res)=>{
 
 router.post('/bid', authenticate, async (req,res)=>{
     const { auction, bid_id, user_id, price } = req.body;
-    // const username = await Profile.getUsername(user_id);
     if (auction === 'forward'){
         const rows = await Contract.browseDesc(bid_id);
         const maxBid = await Contract.getMaxBid(bid_id);
@@ -163,18 +162,21 @@ router.post('/bid', authenticate, async (req,res)=>{
         if (currentBid === null){
             currentBid = price;
         }
-        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price, username})
+        res.render('web/pages/bid', {layout: "web/pages/bid", auction, bid_id, user_id, rows, currentBid, price})
     }
 })
 
 router.post('/submit-bid', authenticate, async (req,res)=>{
-    const { user_id, bidValue, auction, bid_id } = req.body;
+    const { user_id, bidValue, auction, bid_id, price } = req.body;
     const value = Number(bidValue);
     const email = await User.getEmailId(user_id);
     const username = await Profile.getUsername(user_id);
     if (auction === 'forward'){
         const maxBid = await Contract.getMaxBid(bid_id);
         let currentBid = maxBid.max_value
+        if (currentBid === null){
+            currentBid = price;
+        }
         if (value < currentBid || value === currentBid){
             return res.status(400).json({ error: 'Bid Value should be greater than Current Bid' });
         }
@@ -186,10 +188,13 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
     else if (auction === 'reverse'){
         const minBid = await Contract.getMinBid(bid_id);
         let currentBid = minBid.min_value
+        if (currentBid === null){
+            currentBid = price;
+        }
         if (value > currentBid || value === currentBid){
             return res.status(400).json({ error: 'Bid Value should be less than Current Bid' });
         }
-        else if (value < 0 || value === 0){
+        else if (value < 1 || value === 0){
             return res.status(400).json({ error: 'Bid Value should not be less than or equal to 0' });
         }
         else {
@@ -201,11 +206,11 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
 
 const updateTimer = async () => {
     const bids = await Bid.getAll();
+    const now = new Date().toLocaleTimeString('en-IN', { hour12: false }).split(' ')[0]
     bids.forEach(async (bid) => {
         const bid_id = bid.bid_id;
         let timer = bid.timer;
         const time = bid.time;
-        const now = new Date().toLocaleTimeString('en-IN', { hour12: false }).split(' ')[0]
         if (timer > 0 && time <= now){
             timer--; 
             // await pool.query('UPDATE bids SET timer = ? WHERE bid_id = ?', [timer, bid_id])

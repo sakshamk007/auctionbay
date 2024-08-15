@@ -10,7 +10,7 @@ const authenticate = async (req, res, next) => {
         // const [rows] = await pool.query('SELECT * FROM sessions WHERE session_id = ? AND expiry > NOW()', [session_id]);
         const rows = await Session.read(session_id);
         if (rows.length === 0) {
-            return res.status(401).render('web/layouts/auth', { page: 'error', status: 401, message: 'Unauthorised Access - Session Not Found' });
+            return res.redirect('/auth/signin');
         }
         // await pool.query('UPDATE sessions SET expiry = DATE_ADD(NOW(), INTERVAL 30 MINUTE), last_activity = NOW() WHERE session_id = ?', [session_id]);
         await Session.edit(session_id);
