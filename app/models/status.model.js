@@ -8,6 +8,10 @@ const Status = {
     getResponse: async (bid_id) => {
         const [result] = await pool.execute('SELECT response FROM status WHERE bid_id = ?', [bid_id])
         return result[0];
+    },
+    delete: async (bid_id) => {
+        const [result] = await pool.execute('DELETE FROM status WHERE bid_id = ?', [bid_id]);
+        return result;
     }
 };
 

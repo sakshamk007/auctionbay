@@ -206,7 +206,7 @@ router.post('/submit-bid', authenticate, async (req,res)=>{
 
 const updateTimer = async () => {
     const bids = await Bid.getAll();
-    const now = new Date().toLocaleTimeString('en-IN', { hour12: false }).split(' ')[0]
+    const now = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }, { hour12: false }).split(' ')[0]
     bids.forEach(async (bid) => {
         const bid_id = bid.bid_id;
         let timer = bid.timer;
@@ -250,8 +250,14 @@ router.get('/bids-and-timer', authenticate, async (req, res) => {
 });
 
 router.post('/posted-bids-status', authenticate, async (req, res) => {
-    const { bid_id } = req.body
-    const bidder = await Contract.getBidder(bid_id);
+    const { bid_id, auction } = req.body
+    let bidder
+    if (auction === 'forward'){
+        bidder = await Contract.getHighestBidder(bid_id);
+    }
+    else if (auction === 'reverse'){
+        bidder = await Contract.getLowestBidder(bid_id);
+    }
     if (!bidder) {
         return res.status(400).render('web/layouts/auth', { page: 'error', status: 400, message: 'This auction has not happened yet' });
     }
@@ -353,7 +359,10 @@ router.post('/edit-profile', authenticate, async (req, res) => {
 router.post('/edit-posted-bids', authenticate, async (req, res) => {
     const {bid_id, name, email, title, auction, type, contact, description, price} = req.body;
     const user_id = req.cookies.user_id;
-    await Wishlist.delete(bid_id, user_id);
+    await Wishlist.deleteForAll(bid_id, user_id);
+    await Status.delete(bid_id)
+    await Image.delete(bid_id)
+    await Contract.delete(bid_id)
     await Bid.delete(bid_id, user_id);
     res.render('web/pages/postbid', {layout: "web/pages/postbid", user_id, name, email, title, auction, type, contact, description, price})
 })
@@ -361,7 +370,10 @@ router.post('/edit-posted-bids', authenticate, async (req, res) => {
 router.post('/delete-posted-bids', authenticate, async (req, res) => {
     const {bid_id} = req.body;
     const user_id = req.cookies.user_id;
-    await Wishlist.delete(bid_id, user_id);
+    await Wishlist.deleteForAll(bid_id, user_id);
+    await Status.delete(bid_id)
+    await Image.delete(bid_id)
+    await Contract.delete(bid_id)
     await Bid.delete(bid_id, user_id);
     res.redirect('/postedbids');
 })

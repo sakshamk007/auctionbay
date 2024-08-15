@@ -25,9 +25,17 @@ const Contract = {
         const [rows] = await pool.execute('SELECT * FROM bids WHERE bid_id IN (SELECT bid_id FROM contracts WHERE user_id = ?) ORDER BY DATE(date) ASC, TIME(time) ASC', [userId]);
         return rows;
     },
-    getBidder: async (bid_id) => {
+    getHighestBidder: async (bid_id) => {
         const [rows] = await pool.execute('SELECT * FROM contracts WHERE bid_id = ? ORDER BY value DESC LIMIT 1', [bid_id]);
         return rows[0];
+    },
+    getLowestBidder: async (bid_id) => {
+        const [rows] = await pool.execute('SELECT * FROM contracts WHERE bid_id = ? ORDER BY value ASC LIMIT 1', [bid_id]);
+        return rows[0];
+    },
+    delete: async (bid_id) => {
+        const [result] = await pool.execute('DELETE FROM contracts WHERE bid_id = ?', [bid_id]);
+        return result;
     }
 };
 

@@ -16,7 +16,11 @@ const Wishlist = {
     delete: async (wishlist_id, user_id) => {
         const [result] = await pool.execute('DELETE FROM wishlist WHERE wishlist_id = ? AND user_id = ?', [wishlist_id, user_id]);
         return result;
-    }
+    },
+    deleteForAll: async (wishlist_id) => {
+        const [result] = await pool.execute('DELETE FROM wishlist WHERE wishlist_id = ?', [wishlist_id]);
+        return result;
+    },
 };
 
 module.exports = Wishlist;
