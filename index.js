@@ -6,7 +6,6 @@ const debugStartUp = require('debug')('app:startup');
 const expressLayouts = require('express-ejs-layouts');
 require('dotenv').config();
 require('module-alias/register');
-require('@startup/errorLog.start')(process);
 
 const app = express();
 const port = process.env.PORT;

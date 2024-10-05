@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "watch": "concurrently \"nodemon index.js\" \"npx tailwindcss -i ./public/src/input.css -o ./public/src/output.css --watch\""
+    "start": "concurrently \"nodemon index.js\" \"npx tailwindcss -i ./public/src/input.css -o ./public/src/output.css --watch\""
   },
   "author": "Mandeep Saini",
   "license": "ISC",
@@ -37,7 +37,6 @@
   },
   "_moduleAliases": {
     "@root": ".",
-    "@startup": "./app/startup",
     "@routes": "./app/routes",
     "@controllers": "./app/controllers",
     "@middlewares": "./app/middlewares",
