@@ -37,6 +37,7 @@
   },
   "_moduleAliases": {
     "@root": ".",
+    "@startup": "./app/startup",
     "@routes": "./app/routes",
     "@controllers": "./app/controllers",
     "@middlewares": "./app/middlewares",
