@@ -6,6 +6,7 @@ const debugStartUp = require('debug')('app:startup');
 const expressLayouts = require('express-ejs-layouts');
 require('dotenv').config();
 require('module-alias/register');
+require('@startup/errorLog.start')(process);
 
 const app = express();
 const port = process.env.PORT;
@@ -20,7 +21,7 @@ app.set('views', path.join(__dirname, 'app', 'views'));
 app.use(expressLayouts);
 app.set('layout', 'web/layouts/auth', 'web/layouts/landing', 'web/pages/postbid', 'web/pages/checkbid', 'web/pages/startbid', 'web/pages/postedbids', 'web/pages/participatedbids', 'web/pages/bid', 'web/pages/postedstatus', 'web/pages/participatedstatus', 'web/pages/profile');
 
-require('./app/routes/web.routes')(app);
+require('@routes/web.routes')(app);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
