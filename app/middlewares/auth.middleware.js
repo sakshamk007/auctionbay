@@ -30,7 +30,6 @@ const terminateInactiveSessions = async () => {
             // await pool.query('UPDATE sessions SET terminated_at = NOW() WHERE session_id = ?', [row.session_id]);
             await Session.updateTerminatedAt(row.session_id);
         }
-        console.log(`Terminated ${rows.length} inactive sessions`);
     } catch (error) {
         console.error('Error terminating inactive sessions:', error);
     }
