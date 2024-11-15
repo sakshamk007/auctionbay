@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
 const path = require('path');
@@ -11,6 +12,7 @@ require('@startup/errorLog.start')(process);
 const app = express();
 const port = process.env.PORT;
 
+app.use(cors())
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -30,5 +32,5 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
   debugStartUp(`Node app Started`);
-  console.log(`Node app listening on port http://localhost:${port}`);
+  console.log(`Node app listening on port ${port}`);
 })
